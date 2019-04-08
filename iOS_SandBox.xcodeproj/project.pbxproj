@@ -58,8 +58,6 @@
 		A6F5A9BE2259AC3E00F56367 = {
 			isa = PBXGroup;
 			children = (
-				A6F5A9EC225B619000F56367 /* Extensions */,
-				A6F5A9DC2259AD3900F56367 /* Framework */,
 				A6F5A9C92259AC3E00F56367 /* iOS_SandBox */,
 				A6F5A9C82259AC3E00F56367 /* Products */,
 			);
@@ -76,6 +74,8 @@
 		A6F5A9C92259AC3E00F56367 /* iOS_SandBox */ = {
 			isa = PBXGroup;
 			children = (
+				A6F5A9EC225B619000F56367 /* Extensions */,
+				A6F5A9DC2259AD3900F56367 /* Framework */,
 				A6F5A9E32259B29600F56367 /* Main */,
 				A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */,
 				A6F5A9D12259AC3F00F56367 /* Assets.xcassets */,
