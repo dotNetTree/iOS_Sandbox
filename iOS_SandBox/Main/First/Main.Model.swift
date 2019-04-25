@@ -8,34 +8,39 @@
 
 import Foundation
 
-protocol FirstStorage {
-    var name: String? { get }
-    var age: Int? { get }
+protocol FirstEntityCollection {
+    var person: MainPackage.PersonEntity { get }
 }
-protocol FirstBusinessLogic: FirstStorage, Throttle {
+protocol FirstBusinessLogic: FirstEntityCollection, Throttle {
     func age(add: Bool)
 }
 
 extension MainPackage {
-    class Model: FirstBusinessLogic {
-        var name: String?
-        var age: Int?
+    struct PersonEntity: Equatable, Codable {
+        static let empty: PersonEntity = PersonEntity(name: "", age: 0)
+        static func isEmpty(p:PersonEntity) -> Bool {
+            return p == PersonEntity.empty
+        }
+        var name: String
+        var age: Int
+    }
+
+    class PersonModel: FirstBusinessLogic {
         weak var observer: ThrottleObserver!
         var isOpening = false
+
+        var person: PersonEntity = PersonEntity.empty
         init(observer: ThrottleObserver) {
             self.observer = observer
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 guard let self = self else { return }
-                self.name = "강승철"
-                self.age  = 39
+                self.person = PersonEntity(name: "강승철", age: 39)
                 self.push()
             }
         }
-
         func age(add: Bool) {
-            guard let _age = age else { return }
-            let inc = _age + (add ? +1 : -1)
-            age = inc < 0 ? 0 : inc
+            if PersonEntity.isEmpty(p: self.person){ return }
+            self.person.age += add ? 1 : -1
             push()
         }
     }

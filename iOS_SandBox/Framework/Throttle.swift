@@ -32,10 +32,10 @@ protocol Resolvable: class {
     func resolve<T>(at: At) -> T?
 }
 
-class Resolver<Storage, At>: Resolvable {
-    let storage: Storage
-    init(storage: Storage) {
-        self.storage = storage
+class Resolver<EC, At>: Resolvable {
+    let ec: EC
+    init(ec: EC) {
+        self.ec = ec
     }
     func resolve<T>(at: At) -> T? {
         return nil

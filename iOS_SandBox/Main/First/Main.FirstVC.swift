@@ -13,8 +13,8 @@ enum MainPackage {
     typealias VC = MainFirstVC
     @discardableResult
     static func factory(vc: VC) -> VC? {
-        vc.model    = MainPackage.Model(observer: vc)
-        vc.resolver = Resolver(storage: vc.model)
+        vc.model    = MainPackage.PersonModel(observer: vc)
+//        vc.resolver = Resolver(storage: vc.model)
         return vc
     }
 }
@@ -25,7 +25,7 @@ class MainFirstVC: UIViewController, ThrottleObserver {
     let section1 = VSectionView<MainFirstProfileTitleView, MainFirstProfileContentView, MainFirstProfileBottomView>()
 
     var model: FirstBusinessLogic!
-    var resolver: Resolver<FirstStorage, MainPackage.At>!
+//    var resolver: Resolver<FirstEntityCollection, MainPackage.At>!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +52,7 @@ class MainFirstVC: UIViewController, ThrottleObserver {
     }
 
     func updated() {
-        section1.set(with: resolver.resolve(at: .test))
+        section1.set(with: MainPackage.Test().run(ec: model))
         section1.render()
     }
 }

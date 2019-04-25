@@ -8,31 +8,37 @@
 
 import Foundation
 
-extension MainPackage {
-    enum At {
-        case test
-    }
+protocol FirstEntityCollectionResolverAt {
+    associatedtype ATVS
+    associatedtype EC
+    func run<ATVS>(ec: EC) -> ATVS
 }
 
-extension Resolver where Storage == FirstStorage, At == MainPackage.At {
-
-    func resolve<T>(at: At) -> T? {
-        switch at {
-        case .test: return test() as? T
-        }
-    }
-
-    private func test() -> ViewState<SectionVM<
+extension MainPackage {
+    class Test<T>: FirstEntityCollectionResolverAt where T == ViewState<SectionVM<
         MainFirstProfileTitleView.Model, MainFirstProfileContentView.Model, MainFirstProfileBottomView.Model
     >> {
-        guard let name = storage.name, let age = storage.age, age >= 0 else { return .hidden }
-        let head = MainFirstProfileTitleView.Model(title: "\(age)세 어떤 누군가의 Profile")
-        let body = MainFirstProfileContentView.Model(
-            name: name.trimmingCharacters(in: CharacterSet.whitespaces),
-            age: "\(age)세"
-        )
-        let tail = MainFirstProfileBottomView.Model(title: "다른 사람 검색 해보기... >")
-        return .show(SectionVM(.show(head), .show(body), .show(tail), spacing: (100, 20)))
+        typealias ATVS = T
+        typealias EC = FirstEntityCollection
+        func run<ATVS>(ec: EC) -> ATVS {
+            guard !PersonEntity.isEmpty(p: ec.person) else { return .hidden }
+            let name = ec.person.name
+            let age  = ec.person.age
+            let head = MainFirstProfileTitleView.Model(title: "\(age)세 어떤 누군가의 Profile")
+            let body = MainFirstProfileContentView.Model(
+                name: name.trimmingCharacters(in: CharacterSet.whitespaces),
+                age: "\(age)세"
+            )
+            let tail = MainFirstProfileBottomView.Model(title: "다른 사람 검색 해보기... >")
+            return .show(SectionVM(.show(head), .show(body), .show(tail), spacing: (100, 20)))
+        }
     }
-
 }
+
+//extension Resolver where EC == FirstEntityCollection, At == MainPackage.At {
+//
+//    func resolve<EC>(at: At) -> EC? {
+//        return at.run()
+//    }
+//
+//}
