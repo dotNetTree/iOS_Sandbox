@@ -1,5 +1,5 @@
 //
-//  MainFirstProfileView.swift
+//  MainFirstProfileContentView.swift
 //  iOS_SandBox
 //
 //  Created by SeungChul Kang on 08/04/2019.
@@ -9,8 +9,8 @@
 import Foundation
 import UIKit
 
-class MainFirstProfileView: UIView, PlugguableViewProtocol {
-    typealias Model = MainFirstProfileVM
+class MainFirstProfileContentView: UIView, PlugguableViewProtocol {
+    typealias Model = MainFirstProfileContentVM
     var current: VS<Model>?
     var pending: VS<Model>?
 
@@ -25,7 +25,7 @@ class MainFirstProfileView: UIView, PlugguableViewProtocol {
         } } }
 }
 
-extension Renderable where Self: MainFirstProfileView {
+extension Renderable where Self: MainFirstProfileContentView {
     func _render() {
         guard let pending = pending else { return }
         switch pending {
@@ -39,7 +39,7 @@ extension Renderable where Self: MainFirstProfileView {
     }
 }
 
-struct MainFirstProfileVM: Equatable {
+struct MainFirstProfileContentVM: Equatable {
     let name: String
     let age: String
 }

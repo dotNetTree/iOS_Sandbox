@@ -22,17 +22,21 @@ enum MainPackage {
 class MainFirstVC: UIViewController, ThrottleObserver {
     @IBOutlet weak var container: UIStackView!
 
+    let section1 = VSectionView<MainFirstProfileTitleView, MainFirstProfileContentView, MainFirstProfileBottomView>()
+
     var model: FirstBusinessLogic!
     var resolver: Resolver<FirstStorage, MainPackage.At>!
-    let vProfile: MainFirstProfileView = UINib.view()!
-        
+
     override func viewDidLoad() {
         super.viewDidLoad()
         MainPackage.factory(vc: self)
-        vProfile.click = { [weak self] add in
+
+        section1.body.click = { [weak self] add in
             self?.model.age(add: add)
         }
-        container.addArrangedSubview(vProfile)
+        section1.tail.click = { print("next page gogogo...") }
+
+        container.addArrangedSubview(section1)
         model.throttle(open: true)
         model.throttle(open: false)
     }
@@ -48,7 +52,7 @@ class MainFirstVC: UIViewController, ThrottleObserver {
     }
 
     func updated() {
-        vProfile.set(with: resolver.resolve(at: .profile))
-        vProfile.render()
+        section1.set(with: resolver.resolve(at: .test))
+        section1.render()
     }
 }

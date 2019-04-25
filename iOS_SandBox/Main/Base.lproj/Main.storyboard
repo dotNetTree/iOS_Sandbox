@@ -19,13 +19,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Fse-M7-Fpz">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="0.0"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" priority="250" id="fD6-Pr-Xbx"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Fse-M7-Fpz" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="Jl7-Te-mBf"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Fse-M7-Fpz" secondAttribute="bottom" id="WdV-wM-n7N"/>
                             <constraint firstItem="Fse-M7-Fpz" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="arw-YG-QO5"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Fse-M7-Fpz" secondAttribute="trailing" id="buE-LJ-gfG"/>
                         </constraints>

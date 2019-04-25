@@ -8,12 +8,13 @@
 
 import Foundation
 
-enum ViewState<VM: Equatable>: Equatable {
+typealias ViewState = VS
+enum VS<Model: Equatable>: Equatable {
     case hidden
     case fail(String)
     case loading
-    case show(VM)
-    static func == (lhs: ViewState<VM>, rhs: ViewState<VM>) -> Bool {
+    case show(Model)
+    static func == (lhs: VS<Model>, rhs: VS<Model>) -> Bool {
         switch (lhs, rhs) {
         case (.hidden, .hidden):   return true
         case (.loading, .loading): return true

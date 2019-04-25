@@ -16,9 +16,9 @@ extension UINib {
     /// - Parameter nibName: nib file name
     /// - Returns: nib에 설정된 view
     static func view<T>(nibName: String) -> T? {
-        let views = UINib.init(nibName: nibName, bundle: nil)
-            .instantiate(withOwner: nil, options: nil)
-        return views.find { $0 is T } as? T
+        guard !nibName.contains("<") else { return nil }
+        return UINib.init(nibName: nibName, bundle: nil)
+            .instantiate(withOwner: nil, options: nil).find { $0 is T } as? T
     }
 
     /// nib 파일로 부터 UIView를 얻는다.

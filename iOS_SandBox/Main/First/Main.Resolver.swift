@@ -10,7 +10,7 @@ import Foundation
 
 extension MainPackage {
     enum At {
-        case profile
+        case test
     }
 }
 
@@ -18,18 +18,21 @@ extension Resolver where Storage == FirstStorage, At == MainPackage.At {
 
     func resolve<T>(at: At) -> T? {
         switch at {
-        case .profile: return profile() as? T
+        case .test: return test() as? T
         }
     }
 
-    private func profile() -> ViewState<MainFirstProfileVM> {
+    private func test() -> ViewState<SectionVM<
+        MainFirstProfileTitleView.Model, MainFirstProfileContentView.Model, MainFirstProfileBottomView.Model
+    >> {
         guard let name = storage.name, let age = storage.age, age >= 0 else { return .hidden }
-        return .show(
-            MainFirstProfileVM(
-                name: name.trimmingCharacters(in: CharacterSet.whitespaces),
-                age: "\(age)세"
-            )
+        let head = MainFirstProfileTitleView.Model(title: "\(age)세 어떤 누군가의 Profile")
+        let body = MainFirstProfileContentView.Model(
+            name: name.trimmingCharacters(in: CharacterSet.whitespaces),
+            age: "\(age)세"
         )
+        let tail = MainFirstProfileBottomView.Model.init(title: "다른 사람 검색 해보기... >")
+        return .show(SectionVM(.show(head), .show(body), .show(tail)))
     }
 
 }

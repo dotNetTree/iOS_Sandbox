@@ -7,3 +7,32 @@
 //
 
 import Foundation
+
+import UIKit
+
+class MainFirstProfileBottomView: UIView, PlugguableViewProtocol {
+    typealias Model = MainFirstProfileBottomVM
+    var current: VS<Model>?
+    var pending: VS<Model>?
+
+    var click: (() -> Void)!
+
+    @IBOutlet weak var btnNext:  UIButton! { didSet { btnNext.addAction { [weak self] (_) in self?.click() } } }
+}
+
+extension Renderable where Self: MainFirstProfileBottomView {
+    func _render() {
+        guard let pending = pending else { return }
+        switch pending {
+        case .show(let vm):
+            isHidden = false
+            btnNext.setTitle(vm.title, for: .normal)
+        default:
+            isHidden = true
+        }
+    }
+}
+
+struct MainFirstProfileBottomVM: Equatable {
+    let title: String
+}

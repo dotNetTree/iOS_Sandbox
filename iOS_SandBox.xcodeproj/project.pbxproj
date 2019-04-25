@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A608BBE62271982E001BE2D4 /* MainFirstProfileTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A608BBE52271982E001BE2D4 /* MainFirstProfileTitleView.swift */; };
+		A608BBE82271995D001BE2D4 /* MainFirstProfileTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A608BBE72271995D001BE2D4 /* MainFirstProfileTitleView.xib */; };
+		A608BBEA22719A55001BE2D4 /* MainFirstProfileBottomView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A608BBE922719A55001BE2D4 /* MainFirstProfileBottomView.xib */; };
+		A608BBEC22719AFF001BE2D4 /* MainFirstProfileBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A608BBEB22719AFF001BE2D4 /* MainFirstProfileBottomView.swift */; };
 		A6F5A9CB2259AC3E00F56367 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */; };
 		A6F5A9D02259AC3E00F56367 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9CE2259AC3E00F56367 /* Main.storyboard */; };
 		A6F5A9D22259AC3F00F56367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9D12259AC3F00F56367 /* Assets.xcassets */; };
@@ -15,16 +19,20 @@
 		A6F5A9E02259AE7000F56367 /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9DF2259AE7000F56367 /* Renderable.swift */; };
 		A6F5A9E22259B18800F56367 /* Throttle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9E12259B18800F56367 /* Throttle.swift */; };
 		A6F5A9E82259B33600F56367 /* Main.FirstVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9E62259B2D100F56367 /* Main.FirstVC.swift */; };
-		A6F5A9EB225B5F3200F56367 /* MainFirstProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9EA225B5F3200F56367 /* MainFirstProfileView.swift */; };
+		A6F5A9EB225B5F3200F56367 /* MainFirstProfileContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9EA225B5F3200F56367 /* MainFirstProfileContentView.swift */; };
 		A6F5A9EE225B61AC00F56367 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9ED225B61AC00F56367 /* UIButton+Extension.swift */; };
 		A6F5A9F0225B640900F56367 /* UINib+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9EF225B640900F56367 /* UINib+Extension.swift */; };
 		A6F5A9F2225B643D00F56367 /* Sequence+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9F1225B643D00F56367 /* Sequence+Extension.swift */; };
-		A6F5A9F4225B646B00F56367 /* MainFirstProfileView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9F3225B646B00F56367 /* MainFirstProfileView.xib */; };
+		A6F5A9F4225B646B00F56367 /* MainFirstProfileContentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9F3225B646B00F56367 /* MainFirstProfileContentView.xib */; };
 		A6F5A9F6225B66D000F56367 /* Main.Resolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9F5225B66D000F56367 /* Main.Resolver.swift */; };
 		A6F5A9F8225B66EB00F56367 /* Main.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9F7225B66EB00F56367 /* Main.Model.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A608BBE52271982E001BE2D4 /* MainFirstProfileTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstProfileTitleView.swift; sourceTree = "<group>"; };
+		A608BBE72271995D001BE2D4 /* MainFirstProfileTitleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainFirstProfileTitleView.xib; sourceTree = "<group>"; };
+		A608BBE922719A55001BE2D4 /* MainFirstProfileBottomView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainFirstProfileBottomView.xib; sourceTree = "<group>"; };
+		A608BBEB22719AFF001BE2D4 /* MainFirstProfileBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstProfileBottomView.swift; sourceTree = "<group>"; };
 		A6F5A9C72259AC3E00F56367 /* iOS_SandBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS_SandBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A6F5A9CF2259AC3E00F56367 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -35,11 +43,11 @@
 		A6F5A9DF2259AE7000F56367 /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
 		A6F5A9E12259B18800F56367 /* Throttle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Throttle.swift; sourceTree = "<group>"; };
 		A6F5A9E62259B2D100F56367 /* Main.FirstVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.FirstVC.swift; sourceTree = "<group>"; };
-		A6F5A9EA225B5F3200F56367 /* MainFirstProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstProfileView.swift; sourceTree = "<group>"; };
+		A6F5A9EA225B5F3200F56367 /* MainFirstProfileContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstProfileContentView.swift; sourceTree = "<group>"; };
 		A6F5A9ED225B61AC00F56367 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
 		A6F5A9EF225B640900F56367 /* UINib+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINib+Extension.swift"; sourceTree = "<group>"; };
 		A6F5A9F1225B643D00F56367 /* Sequence+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+Extension.swift"; sourceTree = "<group>"; };
-		A6F5A9F3225B646B00F56367 /* MainFirstProfileView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainFirstProfileView.xib; sourceTree = "<group>"; };
+		A6F5A9F3225B646B00F56367 /* MainFirstProfileContentView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainFirstProfileContentView.xib; sourceTree = "<group>"; };
 		A6F5A9F5225B66D000F56367 /* Main.Resolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.Resolver.swift; sourceTree = "<group>"; };
 		A6F5A9F7225B66EB00F56367 /* Main.Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.Model.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -126,8 +134,12 @@
 		A6F5A9E9225B5F1500F56367 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				A6F5A9EA225B5F3200F56367 /* MainFirstProfileView.swift */,
-				A6F5A9F3225B646B00F56367 /* MainFirstProfileView.xib */,
+				A608BBE52271982E001BE2D4 /* MainFirstProfileTitleView.swift */,
+				A608BBE72271995D001BE2D4 /* MainFirstProfileTitleView.xib */,
+				A6F5A9EA225B5F3200F56367 /* MainFirstProfileContentView.swift */,
+				A6F5A9F3225B646B00F56367 /* MainFirstProfileContentView.xib */,
+				A608BBEB22719AFF001BE2D4 /* MainFirstProfileBottomView.swift */,
+				A608BBE922719A55001BE2D4 /* MainFirstProfileBottomView.xib */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -200,9 +212,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A608BBE82271995D001BE2D4 /* MainFirstProfileTitleView.xib in Resources */,
+				A608BBEA22719A55001BE2D4 /* MainFirstProfileBottomView.xib in Resources */,
 				A6F5A9D52259AC3F00F56367 /* LaunchScreen.storyboard in Resources */,
 				A6F5A9D22259AC3F00F56367 /* Assets.xcassets in Resources */,
-				A6F5A9F4225B646B00F56367 /* MainFirstProfileView.xib in Resources */,
+				A6F5A9F4225B646B00F56367 /* MainFirstProfileContentView.xib in Resources */,
 				A6F5A9D02259AC3E00F56367 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,13 +230,15 @@
 			files = (
 				A6F5A9E82259B33600F56367 /* Main.FirstVC.swift in Sources */,
 				A6F5A9F2225B643D00F56367 /* Sequence+Extension.swift in Sources */,
+				A608BBEC22719AFF001BE2D4 /* MainFirstProfileBottomView.swift in Sources */,
 				A6F5A9F8225B66EB00F56367 /* Main.Model.swift in Sources */,
 				A6F5A9F0225B640900F56367 /* UINib+Extension.swift in Sources */,
 				A6F5A9CB2259AC3E00F56367 /* AppDelegate.swift in Sources */,
-				A6F5A9EB225B5F3200F56367 /* MainFirstProfileView.swift in Sources */,
+				A6F5A9EB225B5F3200F56367 /* MainFirstProfileContentView.swift in Sources */,
 				A6F5A9DE2259AD6100F56367 /* ViewState.swift in Sources */,
 				A6F5A9F6225B66D000F56367 /* Main.Resolver.swift in Sources */,
 				A6F5A9EE225B61AC00F56367 /* UIButton+Extension.swift in Sources */,
+				A608BBE62271982E001BE2D4 /* MainFirstProfileTitleView.swift in Sources */,
 				A6F5A9E22259B18800F56367 /* Throttle.swift in Sources */,
 				A6F5A9E02259AE7000F56367 /* Renderable.swift in Sources */,
 			);
