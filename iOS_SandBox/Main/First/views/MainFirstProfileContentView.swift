@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 
-class MainFirstProfileView: UIView, Renderable {
-    typealias VM = MainFirstProfileVM
-    var current: ViewState<MainFirstProfileView.VM>?
-    var pending: ViewState<MainFirstProfileView.VM>?
+class MainFirstProfileView: UIView, PlugguableViewProtocol {
+    typealias Model = MainFirstProfileVM
+    var current: VS<Model>?
+    var pending: VS<Model>?
 
     var click: ((_ up: Bool) -> Void)!
 
