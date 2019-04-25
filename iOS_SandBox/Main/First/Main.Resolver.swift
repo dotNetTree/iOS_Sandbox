@@ -31,8 +31,8 @@ extension Resolver where Storage == FirstStorage, At == MainPackage.At {
             name: name.trimmingCharacters(in: CharacterSet.whitespaces),
             age: "\(age)세"
         )
-        let tail = MainFirstProfileBottomView.Model.init(title: "다른 사람 검색 해보기... >")
-        return .show(SectionVM(.show(head), .show(body), .show(tail)))
+        let tail = MainFirstProfileBottomView.Model(title: "다른 사람 검색 해보기... >")
+        return .show(SectionVM(.show(head), .show(body), .show(tail), spacing: (100, 20)))
     }
 
 }

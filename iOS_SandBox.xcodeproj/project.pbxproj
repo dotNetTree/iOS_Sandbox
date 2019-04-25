@@ -11,6 +11,8 @@
 		A608BBE82271995D001BE2D4 /* MainFirstProfileTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A608BBE72271995D001BE2D4 /* MainFirstProfileTitleView.xib */; };
 		A608BBEA22719A55001BE2D4 /* MainFirstProfileBottomView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A608BBE922719A55001BE2D4 /* MainFirstProfileBottomView.xib */; };
 		A608BBEC22719AFF001BE2D4 /* MainFirstProfileBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A608BBEB22719AFF001BE2D4 /* MainFirstProfileBottomView.swift */; };
+		A608BBEE2271AF71001BE2D4 /* MainFirstProfileTitle2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A608BBED2271AF71001BE2D4 /* MainFirstProfileTitle2View.swift */; };
+		A608BBF02271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib in Resources */ = {isa = PBXBuildFile; fileRef = A608BBEF2271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib */; };
 		A6F5A9CB2259AC3E00F56367 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */; };
 		A6F5A9D02259AC3E00F56367 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9CE2259AC3E00F56367 /* Main.storyboard */; };
 		A6F5A9D22259AC3F00F56367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9D12259AC3F00F56367 /* Assets.xcassets */; };
@@ -33,6 +35,8 @@
 		A608BBE72271995D001BE2D4 /* MainFirstProfileTitleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainFirstProfileTitleView.xib; sourceTree = "<group>"; };
 		A608BBE922719A55001BE2D4 /* MainFirstProfileBottomView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainFirstProfileBottomView.xib; sourceTree = "<group>"; };
 		A608BBEB22719AFF001BE2D4 /* MainFirstProfileBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstProfileBottomView.swift; sourceTree = "<group>"; };
+		A608BBED2271AF71001BE2D4 /* MainFirstProfileTitle2View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstProfileTitle2View.swift; sourceTree = "<group>"; };
+		A608BBEF2271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainFirstProfileTitle2View.xib; sourceTree = "<group>"; };
 		A6F5A9C72259AC3E00F56367 /* iOS_SandBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS_SandBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A6F5A9CF2259AC3E00F56367 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -107,7 +111,6 @@
 			isa = PBXGroup;
 			children = (
 				A6F5A9E42259B2B500F56367 /* First */,
-				A6F5A9E52259B2BB00F56367 /* Second */,
 				A6F5A9CE2259AC3E00F56367 /* Main.storyboard */,
 			);
 			path = Main;
@@ -124,18 +127,13 @@
 			path = First;
 			sourceTree = "<group>";
 		};
-		A6F5A9E52259B2BB00F56367 /* Second */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Second;
-			sourceTree = "<group>";
-		};
 		A6F5A9E9225B5F1500F56367 /* views */ = {
 			isa = PBXGroup;
 			children = (
 				A608BBE52271982E001BE2D4 /* MainFirstProfileTitleView.swift */,
 				A608BBE72271995D001BE2D4 /* MainFirstProfileTitleView.xib */,
+				A608BBED2271AF71001BE2D4 /* MainFirstProfileTitle2View.swift */,
+				A608BBEF2271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib */,
 				A6F5A9EA225B5F3200F56367 /* MainFirstProfileContentView.swift */,
 				A6F5A9F3225B646B00F56367 /* MainFirstProfileContentView.xib */,
 				A608BBEB22719AFF001BE2D4 /* MainFirstProfileBottomView.swift */,
@@ -214,6 +212,7 @@
 			files = (
 				A608BBE82271995D001BE2D4 /* MainFirstProfileTitleView.xib in Resources */,
 				A608BBEA22719A55001BE2D4 /* MainFirstProfileBottomView.xib in Resources */,
+				A608BBF02271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib in Resources */,
 				A6F5A9D52259AC3F00F56367 /* LaunchScreen.storyboard in Resources */,
 				A6F5A9D22259AC3F00F56367 /* Assets.xcassets in Resources */,
 				A6F5A9F4225B646B00F56367 /* MainFirstProfileContentView.xib in Resources */,
@@ -236,6 +235,7 @@
 				A6F5A9CB2259AC3E00F56367 /* AppDelegate.swift in Sources */,
 				A6F5A9EB225B5F3200F56367 /* MainFirstProfileContentView.swift in Sources */,
 				A6F5A9DE2259AD6100F56367 /* ViewState.swift in Sources */,
+				A608BBEE2271AF71001BE2D4 /* MainFirstProfileTitle2View.swift in Sources */,
 				A6F5A9F6225B66D000F56367 /* Main.Resolver.swift in Sources */,
 				A6F5A9EE225B61AC00F56367 /* UIButton+Extension.swift in Sources */,
 				A608BBE62271982E001BE2D4 /* MainFirstProfileTitleView.swift in Sources */,

@@ -61,9 +61,11 @@ class SectionView<Head, Body, Tail>: UIStackView & Renderable & PlugguableViewPr
     var head: Head
     var body: Body
     var tail: Tail
+    fileprivate var wrappedBody: PaddingView<Body>
     required init() {
+        self.wrappedBody = PaddingView<Body>()
         self.head = UINib.view() ?? createInstance(ofType: Head.self)
-        self.body = UINib.view() ?? createInstance(ofType: Body.self)
+        self.body = wrappedBody.content
         self.tail = UINib.view() ?? createInstance(ofType: Tail.self)
         super.init(frame: .zero)
     }
@@ -88,13 +90,18 @@ extension SectionView {
         switch pending {
         case .show(let m):
             isHidden = false
-            spacing = CGFloat(m.spacing.0)
-            [head, body, tail].forEach { self.addArrangedSubview($0) }
+            [head, wrappedBody, tail].forEach { self.addArrangedSubview($0) }
             head.set(with: m.head)
-            body.set(with: m.body)
+            switch axis {
+            case .horizontal:
+                wrappedBody.set(with: .show(PaddingVM(m.body, spacing: (0, m.spacing.0, 0, m.spacing.1))))
+            case .vertical:
+                wrappedBody.set(with: .show(PaddingVM(m.body, spacing: (m.spacing.0, 0, m.spacing.1, 0))))
+            @unknown default: break
+            }
             tail.set(with: m.tail)
             head.render()
-            body.render()
+            wrappedBody.render()
             tail.render()
         default:
             isHidden = true
@@ -123,6 +130,67 @@ struct SectionVM<Head, Body, Tail>: Equatable where Head: Equatable, Body: Equat
         self.head = head
         self.body = body
         self.tail = tail
+        self.spacing = spacing
+    }
+}
+
+class PaddingView<Content>: UIView & Renderable & PlugguableViewProtocol
+    where Content: PlugguableViewProtocol {
+    typealias Model = PaddingVM<Content.Model>
+    var current: VS<Model>?
+    var pending: VS<Model>?
+    var content: Content
+    var top: NSLayoutConstraint!
+    var left: NSLayoutConstraint!
+    var bottom: NSLayoutConstraint!
+    var right: NSLayoutConstraint!
+    required init() {
+        self.content = UINib.view() ?? createInstance(ofType: Content.self)
+        super.init(frame: .zero)
+        content.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(content)
+        top    = content.topAnchor.constraint(equalTo: self.topAnchor)
+        left   = content.leftAnchor.constraint(equalTo: self.leftAnchor)
+        bottom = self.bottomAnchor.constraint(equalTo: content.bottomAnchor)
+        right  = self.rightAnchor.constraint(equalTo: content.rightAnchor)
+        NSLayoutConstraint.activate([top, left, bottom, right])
+    }
+    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+}
+
+extension PaddingView {
+    func _render() {
+        guard let pending = pending else { return }
+        switch pending {
+        case .show(let m):
+            isHidden = false
+            top.constant    = CGFloat(m.spacing.top)
+            left.constant   = CGFloat(m.spacing.left)
+            bottom.constant = CGFloat(m.spacing.bottom)
+            right.constant  = CGFloat(m.spacing.right)
+            content.set(with: m.content)
+            content.render()
+        default:
+            isHidden = true
+        }
+    }
+}
+
+struct PaddingVM<Content>: Equatable where Content: Equatable {
+    static func == (lhs: PaddingVM<Content>, rhs: PaddingVM<Content>) -> Bool {
+        return  lhs.content == rhs.content               &&
+                lhs.spacing.top == lhs.spacing.top       &&
+                lhs.spacing.left == lhs.spacing.left     &&
+                lhs.spacing.bottom == lhs.spacing.bottom &&
+                lhs.spacing.right == lhs.spacing.right
+    }
+    let content: VS<Content>
+    let spacing: (top: Double, left: Double, bottom: Double, right: Double)
+    init(
+        _ content: VS<Content>,
+        spacing: (top: Double, left: Double, bottom: Double, right: Double) = (0.0, 0.0, 0.0, 0.0)
+    ) {
+        self.content = content
         self.spacing = spacing
     }
 }
