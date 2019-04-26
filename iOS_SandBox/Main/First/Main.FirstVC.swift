@@ -22,7 +22,7 @@ enum MainPackage {
 class MainFirstVC: UIViewController, ThrottleObserver {
     @IBOutlet weak var container: UIStackView!
 
-    let section1 = VSectionView<MainFirstProfileTitleView, MainFirstProfileContentView, MainFirstProfileBottomView>()
+    let section1 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
 
     var model: FirstBusinessLogic!
 //    var resolver: Resolver<FirstEntityCollection, MainPackage.At>!
@@ -31,10 +31,10 @@ class MainFirstVC: UIViewController, ThrottleObserver {
         super.viewDidLoad()
         MainPackage.factory(vc: self)
 
-        section1.body.click = { [weak self] add in
+        section1.content.body.click = { [weak self] add in
             self?.model.age(add: add)
         }
-        section1.tail.click = { print("next page gogogo...") }
+        section1.content.tail.click = { print("next page gogogo...") }
 
         container.addArrangedSubview(section1)
         model.throttle(open: true)
@@ -52,7 +52,8 @@ class MainFirstVC: UIViewController, ThrottleObserver {
     }
 
     func updated() {
-        section1.set(with: MainPackage.Test().run(ec: model))
+
+        section1.set(with: MainPackage.MainSection().run(ec: model))
         section1.render()
     }
 }

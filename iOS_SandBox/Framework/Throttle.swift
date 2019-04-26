@@ -26,18 +26,3 @@ extension Throttle {
         isOpening = open; push()
     }
 }
-
-protocol Resolvable: class {
-    associatedtype At
-    func resolve<T>(at: At) -> T?
-}
-
-class Resolver<EC, At>: Resolvable {
-    let ec: EC
-    init(ec: EC) {
-        self.ec = ec
-    }
-    func resolve<T>(at: At) -> T? {
-        return nil
-    }
-}

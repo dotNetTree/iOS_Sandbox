@@ -11,8 +11,8 @@ import UIKit
 
 class MainFirstProfileTitleView: UIView, PlugguableViewProtocol {
     typealias Model = MainFirstProfileTitleVM
-    var current: VS<Model>?
-    var pending: VS<Model>?
+    var current: ViewState<Model>?
+    var pending: ViewState<Model>?
 
     var click: ((_ up: Bool) -> Void)!
 

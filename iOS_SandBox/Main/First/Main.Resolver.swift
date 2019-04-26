@@ -8,37 +8,34 @@
 
 import Foundation
 
-protocol FirstEntityCollectionResolverAt {
-    associatedtype ATVS
+protocol ViewAt {
     associatedtype EC
-    func run<ATVS>(ec: EC) -> ATVS
+    associatedtype ATVS
+    func run(ec: EC) -> ATVS
+}
+protocol FirstEntityCollectionViewAt: ViewAt {
+    typealias EC = FirstEntityCollection
+    typealias ATVS = ViewState<PaddingVM<SectionVM<MainFirstProfileTitle2View.Model, MainFirstProfileContentView.Model, MainFirstProfileBottomView.Model>>>
 }
 
 extension MainPackage {
-    class Test<T>: FirstEntityCollectionResolverAt where T == ViewState<SectionVM<
-        MainFirstProfileTitleView.Model, MainFirstProfileContentView.Model, MainFirstProfileBottomView.Model
-    >> {
-        typealias ATVS = T
-        typealias EC = FirstEntityCollection
-        func run<ATVS>(ec: EC) -> ATVS {
-            guard !PersonEntity.isEmpty(p: ec.person) else { return .hidden }
+    class MainSection: FirstEntityCollectionViewAt {
+        func run(ec: EC) -> ATVS {
+            guard !MainPackage.PersonEntity.isEmpty(p: ec.person) else { return .hidden }
             let name = ec.person.name
             let age  = ec.person.age
-            let head = MainFirstProfileTitleView.Model(title: "\(age)세 어떤 누군가의 Profile")
+            let head = MainFirstProfileTitle2View.Model(title: "\(age)세 어떤 누군가의 Profile")
             let body = MainFirstProfileContentView.Model(
                 name: name.trimmingCharacters(in: CharacterSet.whitespaces),
                 age: "\(age)세"
             )
             let tail = MainFirstProfileBottomView.Model(title: "다른 사람 검색 해보기... >")
-            return .show(SectionVM(.show(head), .show(body), .show(tail), spacing: (100, 20)))
+            return .show(
+                PaddingVM(
+                    .show(SectionVM(.show(head), .show(body), .show(tail), spacing: (100, 20))),
+                    spacing: (top: 0.0, left: 20, bottom: 40, right: 50)
+                )
+            )
         }
     }
 }
-
-//extension Resolver where EC == FirstEntityCollection, At == MainPackage.At {
-//
-//    func resolve<EC>(at: At) -> EC? {
-//        return at.run()
-//    }
-//
-//}

@@ -15,15 +15,15 @@ protocol AnyRenderable {
 
 protocol Renderable: class, AnyRenderable {
     associatedtype Model: Equatable
-    var current: VS<Model>? { set get }
-    var pending: VS<Model>? { set get }
-    func set(with model: VS<Model>?)
+    var current: ViewState<Model>? { set get }
+    var pending: ViewState<Model>? { set get }
+    func set(with model: ViewState<Model>?)
     func render()
     func _render()
 }
 
 extension Renderable {
-    func set(with model: VS<Model>?) {
+    func set(with model: ViewState<Model>?) {
         pending = model
     }
     func render() {
@@ -37,7 +37,7 @@ extension Renderable {
         print("[Abstract] \(self) render를 구현해주세요!")
     }
     func _render(with model: Any) {
-        guard let model = model as? VS<Model> else { return }
+        guard let model = model as? ViewState<Model> else { return }
         self.set(with: model)
         self.render()
     }
@@ -56,8 +56,8 @@ func createInstance<T>(ofType: T.Type) -> T where T: PlugguableViewProtocol {
 class SectionView<Head, Body, Tail>: UIStackView & Renderable & PlugguableViewProtocol
     where Head: PlugguableViewProtocol, Body: PlugguableViewProtocol, Tail: PlugguableViewProtocol {
     typealias Model = SectionVM<Head.Model, Body.Model, Tail.Model>
-    var current: VS<Model>?
-    var pending: VS<Model>?
+    var current: ViewState<Model>?
+    var pending: ViewState<Model>?
     var head: Head
     var body: Body
     var tail: Tail
@@ -117,14 +117,14 @@ struct SectionVM<Head, Body, Tail>: Equatable where Head: Equatable, Body: Equat
                 lhs.spacing.0 == rhs.spacing.0 &&
                 lhs.spacing.1 == rhs.spacing.1
     }
-    let head: VS<Head>
-    let body: VS<Body>
-    let tail: VS<Tail>
+    let head: ViewState<Head>
+    let body: ViewState<Body>
+    let tail: ViewState<Tail>
     let spacing: (Double, Double)
     init(
-        _ head: VS<Head>,
-        _ body: VS<Body>,
-        _ tail: VS<Tail>,
+        _ head: ViewState<Head>,
+        _ body: ViewState<Body>,
+        _ tail: ViewState<Tail>,
         spacing: (Double, Double) = (0.0, 0.0)
     ) {
         self.head = head
@@ -137,8 +137,8 @@ struct SectionVM<Head, Body, Tail>: Equatable where Head: Equatable, Body: Equat
 class PaddingView<Content>: UIView & Renderable & PlugguableViewProtocol
     where Content: PlugguableViewProtocol {
     typealias Model = PaddingVM<Content.Model>
-    var current: VS<Model>?
-    var pending: VS<Model>?
+    var current: ViewState<Model>?
+    var pending: ViewState<Model>?
     var content: Content
     var top: NSLayoutConstraint!
     var left: NSLayoutConstraint!
@@ -184,10 +184,10 @@ struct PaddingVM<Content>: Equatable where Content: Equatable {
                 lhs.spacing.bottom == lhs.spacing.bottom &&
                 lhs.spacing.right == lhs.spacing.right
     }
-    let content: VS<Content>
+    let content: ViewState<Content>
     let spacing: (top: Double, left: Double, bottom: Double, right: Double)
     init(
-        _ content: VS<Content>,
+        _ content: ViewState<Content>,
         spacing: (top: Double, left: Double, bottom: Double, right: Double) = (0.0, 0.0, 0.0, 0.0)
     ) {
         self.content = content

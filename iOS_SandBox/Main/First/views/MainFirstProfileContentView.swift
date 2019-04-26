@@ -11,8 +11,8 @@ import UIKit
 
 class MainFirstProfileContentView: UIView, PlugguableViewProtocol {
     typealias Model = MainFirstProfileContentVM
-    var current: VS<Model>?
-    var pending: VS<Model>?
+    var current: ViewState<Model>?
+    var pending: ViewState<Model>?
 
     var click: ((_ up: Bool) -> Void)!
 
