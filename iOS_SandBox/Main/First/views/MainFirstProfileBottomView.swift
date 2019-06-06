@@ -11,9 +11,9 @@ import Foundation
 import UIKit
 
 class MainFirstProfileBottomView: UIView, PlugguableViewProtocol {
-    typealias Model = MainFirstProfileBottomVM
-    var current: ViewState<Model>?
-    var pending: ViewState<Model>?
+    typealias Model = ViewState<MainFirstProfileBottomVM>
+    var current: Model?
+    var pending: Model?
 
     var click: (() -> Void)!
 

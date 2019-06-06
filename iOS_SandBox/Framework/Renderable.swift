@@ -15,15 +15,15 @@ protocol AnyRenderable {
 
 protocol Renderable: class, AnyRenderable {
     associatedtype Model: Equatable
-    var current: ViewState<Model>? { set get }
-    var pending: ViewState<Model>? { set get }
-    func set(with model: ViewState<Model>?)
+    var current: Model? { set get }
+    var pending: Model? { set get }
+    func set(with model: Model?)
     func render()
     func _render()
 }
 
 extension Renderable {
-    func set(with model: ViewState<Model>?) {
+    func set(with model: Model?) {
         pending = model
     }
     func render() {
@@ -37,7 +37,7 @@ extension Renderable {
         print("[Abstract] \(self) render를 구현해주세요!")
     }
     func _render(with model: Any) {
-        guard let model = model as? ViewState<Model> else { return }
+        guard let model = model as? Model else { return }
         self.set(with: model)
         self.render()
     }
@@ -45,7 +45,7 @@ extension Renderable {
 
 typealias RenderableView = Renderable & UIView
 
-protocol PlugguableViewProtocol: RenderableView {
+protocol PlugguableViewProtocol: Renderable & UIView {
     init()
 }
 
@@ -53,11 +53,11 @@ func createInstance<T>(ofType: T.Type) -> T where T: PlugguableViewProtocol {
     return ofType.init()
 }
 
-class SectionView<Head, Body, Tail>: UIStackView & Renderable & PlugguableViewProtocol
+class SectionView<Head, Body, Tail>: UIStackView & PlugguableViewProtocol
     where Head: PlugguableViewProtocol, Body: PlugguableViewProtocol, Tail: PlugguableViewProtocol {
-    typealias Model = SectionVM<Head.Model, Body.Model, Tail.Model>
-    var current: ViewState<Model>?
-    var pending: ViewState<Model>?
+    typealias Model = ViewState<SectionVM<Head.Model, Body.Model, Tail.Model>>
+    var current: Model?
+    var pending: Model?
     var head: Head
     var body: Body
     var tail: Tail
@@ -94,9 +94,9 @@ extension SectionView {
             head.set(with: m.head)
             switch axis {
             case .horizontal:
-                wrappedBody.set(with: .show(PaddingVM(m.body, spacing: (0, m.spacing.0, 0, m.spacing.1))))
+                wrappedBody.set(with: PaddingVM(m.body, spacing: (0, m.spacing.0, 0, m.spacing.1)))
             case .vertical:
-                wrappedBody.set(with: .show(PaddingVM(m.body, spacing: (m.spacing.0, 0, m.spacing.1, 0))))
+                wrappedBody.set(with: PaddingVM(m.body, spacing: (m.spacing.0, 0, m.spacing.1, 0)))
             @unknown default: break
             }
             tail.set(with: m.tail)
@@ -117,14 +117,14 @@ struct SectionVM<Head, Body, Tail>: Equatable where Head: Equatable, Body: Equat
                 lhs.spacing.0 == rhs.spacing.0 &&
                 lhs.spacing.1 == rhs.spacing.1
     }
-    let head: ViewState<Head>
-    let body: ViewState<Body>
-    let tail: ViewState<Tail>
+    let head: Head
+    let body: Body
+    let tail: Tail
     let spacing: (Double, Double)
     init(
-        _ head: ViewState<Head>,
-        _ body: ViewState<Body>,
-        _ tail: ViewState<Tail>,
+        _ head: Head,
+        _ body: Body,
+        _ tail: Tail,
         spacing: (Double, Double) = (0.0, 0.0)
     ) {
         self.head = head
@@ -134,11 +134,11 @@ struct SectionVM<Head, Body, Tail>: Equatable where Head: Equatable, Body: Equat
     }
 }
 
-class PaddingView<Content>: UIView & Renderable & PlugguableViewProtocol
+class PaddingView<Content>: UIView & PlugguableViewProtocol
     where Content: PlugguableViewProtocol {
     typealias Model = PaddingVM<Content.Model>
-    var current: ViewState<Model>?
-    var pending: ViewState<Model>?
+    var current: Model?
+    var pending: Model?
     var content: Content
     var top: NSLayoutConstraint!
     var left: NSLayoutConstraint!
@@ -161,18 +161,15 @@ class PaddingView<Content>: UIView & Renderable & PlugguableViewProtocol
 extension PaddingView {
     func _render() {
         guard let pending = pending else { return }
-        switch pending {
-        case .show(let m):
-            isHidden = false
-            top.constant    = CGFloat(m.spacing.top)
-            left.constant   = CGFloat(m.spacing.left)
-            bottom.constant = CGFloat(m.spacing.bottom)
-            right.constant  = CGFloat(m.spacing.right)
-            content.set(with: m.content)
-            content.render()
-        default:
-            isHidden = true
-        }
+        let m       = pending.content
+        let padding = pending.spacing
+        top.constant    = CGFloat(padding.top)
+        left.constant   = CGFloat(padding.left)
+        bottom.constant = CGFloat(padding.bottom)
+        right.constant  = CGFloat(padding.right)
+        content.set(with: m)
+        content.render()
+        isHidden = (m as? ViewStateHiddenable)?.isHidden() ?? false
     }
 }
 
@@ -184,10 +181,10 @@ struct PaddingVM<Content>: Equatable where Content: Equatable {
                 lhs.spacing.bottom == lhs.spacing.bottom &&
                 lhs.spacing.right == lhs.spacing.right
     }
-    let content: ViewState<Content>
+    let content: Content
     let spacing: (top: Double, left: Double, bottom: Double, right: Double)
     init(
-        _ content: ViewState<Content>,
+        _ content: Content,
         spacing: (top: Double, left: Double, bottom: Double, right: Double) = (0.0, 0.0, 0.0, 0.0)
     ) {
         self.content = content

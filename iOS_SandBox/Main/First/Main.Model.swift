@@ -30,7 +30,7 @@ extension MainPackage {
         var isOpening = false
 
         var person: PersonEntity = PersonEntity.empty
-        init(observer: ThrottleObserver) {
+        init(observer: ThrottleObserver? = nil) {
             self.observer = observer
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 guard let self = self else { return }
@@ -45,4 +45,3 @@ extension MainPackage {
         }
     }
 }
-

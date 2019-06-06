@@ -8,7 +8,10 @@
 
 import Foundation
 
-enum ViewState<Model: Equatable>: Equatable {
+protocol ViewStateHiddenable {
+    func isHidden() -> Bool
+}
+enum ViewState<Model: Equatable>: Equatable, ViewStateHiddenable {
     case hidden
     case fail(String)
     case loading
@@ -21,6 +24,12 @@ enum ViewState<Model: Equatable>: Equatable {
         case let (.show(e1), .show(e2)) where e1 == e2: return true
         default:
             return false
+        }
+    }
+    func isHidden() -> Bool {
+        switch self {
+        case .hidden: return true
+        default:      return false
         }
     }
 }

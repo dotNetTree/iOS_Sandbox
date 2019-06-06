@@ -23,6 +23,10 @@ class MainFirstVC: UIViewController, ThrottleObserver {
     @IBOutlet weak var container: UIStackView!
 
     let section1 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
+    let section2 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
+
+    let section3 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
+    let section4 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
 
     var model: FirstBusinessLogic!
 //    var resolver: Resolver<FirstEntityCollection, MainPackage.At>!
@@ -37,6 +41,9 @@ class MainFirstVC: UIViewController, ThrottleObserver {
         section1.content.tail.click = { print("next page gogogo...") }
 
         container.addArrangedSubview(section1)
+        container.addArrangedSubview(section2)
+        container.addArrangedSubview(section3)
+        container.addArrangedSubview(section4)
         model.throttle(open: true)
         model.throttle(open: false)
     }
@@ -52,8 +59,8 @@ class MainFirstVC: UIViewController, ThrottleObserver {
     }
 
     func updated() {
-
         section1.set(with: MainPackage.MainSection().run(ec: model))
         section1.render()
     }
 }
+

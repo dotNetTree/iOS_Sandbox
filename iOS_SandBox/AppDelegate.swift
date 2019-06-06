@@ -8,13 +8,85 @@
 
 import UIKit
 
+extension String {
+    var isBlank: Bool {
+        return self.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+    func substring(_ r: Range<Int>?) -> String {
+        guard let r = r else { return self }
+        let fromIndex  = self.index(self.startIndex, offsetBy: r.lowerBound)
+        let toIndex    = self.index(self.startIndex, offsetBy: r.upperBound)
+        let indexRange = Range<String.Index>(uncheckedBounds: (lower: fromIndex, upper: toIndex))
+        return String(self[indexRange])
+    }
+    func replace(_ target: String, _ with: String) -> String {
+        return self.replacingOccurrences(of: target, with: with)
+    }
+    func replace(pattern: String, _ with: String) -> String {
+        return self.replace(pattern: pattern, { _,_ in with })
+    }
+    func replace(pattern: String, _ predicate: (String, NSTextCheckingResult) -> String) -> String {
+        guard let matchs = (try? NSRegularExpression(pattern: pattern))?
+            .matches(in: self, range: NSRange(self.startIndex..., in: self)) else {
+                return self
+        }
+        var prev = 0
+        return matchs.reduce("") { (accu, curr) -> String in
+            let lower = curr.range.lowerBound
+            let upper = curr.range.upperBound
+            defer { prev = upper }
+            return accu
+                + self.substring(
+                    Range(uncheckedBounds: (lower: prev, upper: lower))
+                )
+                + predicate(self, curr)
+        }
+        + self.substring(
+            Range(uncheckedBounds: (lower: prev, upper: self.count))
+        )
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        let cleanUp = #"[^.\d-+*\/]"#
+        let mulDiv = #"((?:\+-)?[.\d]+)([*\/])((?:\+-)?[.\d]+)"#
+        let paren  = #"\(([^()]*)\)"#
+        let ex = { (v: String) -> Double in
+            v.replace(pattern: cleanUp, "")
+            .replace("-", "+-")
+            .replace(pattern: mulDiv) { (o, r) in
+                let (left, op, right) = (
+                    o.substring(Range(r.range(at: 1))).replace("+", ""),
+                    o.substring(Range(r.range(at: 2))),
+                    o.substring(Range(r.range(at: 3))).replace("+", "")
+                )
+                let l = Double(left)!
+                let r = Double(right)!
+                return "\(op == "*" ? l * r : l / r)".replace("-", "+-")
+            }
+            .components(separatedBy: "+")
+            .reduce(0.0) { $0 + ($1.isBlank ? 0.0 : Double($1)!) }
+        }
+        let calc = { (v: String) -> Double in
+            var v = v
+            guard let regex = try? NSRegularExpression(pattern: paren) else {
+                return 0.0
+            }
+            while regex.firstMatch(in: v, options: [], range: NSRange.init(location: 0, length: v.count - 1)) != nil {
+                v = v.replace(pattern: paren, { (o, r) -> String in
+                    "\(ex(o.substring(Range(r.range(at: 1)))))"
+                })
+            }
+            return ex(v)
+        }
+
+        print(calc("1 +   3 * (-2 + 4) + 6. ")) // result 13.0
+
         // Override point for customization after application launch.
         return true
     }

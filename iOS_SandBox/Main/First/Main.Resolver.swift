@@ -8,33 +8,39 @@
 
 import Foundation
 
-protocol ViewAt {
+protocol Resolver {
     associatedtype EC
     associatedtype ATVS
     func run(ec: EC) -> ATVS
 }
-protocol FirstEntityCollectionViewAt: ViewAt {
-    typealias EC = FirstEntityCollection
-    typealias ATVS = ViewState<PaddingVM<SectionVM<MainFirstProfileTitle2View.Model, MainFirstProfileContentView.Model, MainFirstProfileBottomView.Model>>>
+
+protocol FirstEntityCollectionResolver: Resolver
+    where EC == FirstEntityCollection,
+        ATVS == PaddingVM<ViewState<
+                    SectionVM<
+                        MainFirstProfileTitle2View.Model,
+                        MainFirstProfileContentView.Model,
+                        MainFirstProfileBottomView.Model
+                    >
+                >> {
 }
 
 extension MainPackage {
-    class MainSection: FirstEntityCollectionViewAt {
+    class MainSection: FirstEntityCollectionResolver {
         func run(ec: EC) -> ATVS {
-            guard !MainPackage.PersonEntity.isEmpty(p: ec.person) else { return .hidden }
             let name = ec.person.name
             let age  = ec.person.age
-            let head = MainFirstProfileTitle2View.Model(title: "\(age)세 어떤 누군가의 Profile")
-            let body = MainFirstProfileContentView.Model(
+
+            let head = MainFirstProfileTitle2VM(title: "\(age)세 어떤 누군가의 Profile")
+            let body = MainFirstProfileContentVM(
                 name: name.trimmingCharacters(in: CharacterSet.whitespaces),
                 age: "\(age)세"
             )
-            let tail = MainFirstProfileBottomView.Model(title: "다른 사람 검색 해보기... >")
-            return .show(
+            let tail = MainFirstProfileBottomVM(title: "다른 사람 검색 해보기... >")
+            return
                 PaddingVM(
                     .show(SectionVM(.show(head), .show(body), .show(tail), spacing: (100, 20))),
                     spacing: (top: 0.0, left: 20, bottom: 40, right: 50)
-                )
             )
         }
     }

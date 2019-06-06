@@ -10,9 +10,9 @@ import Foundation
 import UIKit
 
 class MainFirstProfileTitle2View: UIView, PlugguableViewProtocol {
-    typealias Model = MainFirstProfileTitle2VM
-    var current: ViewState<Model>?
-    var pending: ViewState<Model>?
+    typealias Model = ViewState<MainFirstProfileTitle2VM>
+    var current: Model?
+    var pending: Model?
 
     var click: ((_ up: Bool) -> Void)!
 
