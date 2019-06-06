@@ -11,18 +11,28 @@ import Foundation
 protocol Resolver {
     associatedtype EC
     associatedtype ATVS
-    func run(ec: EC) -> ATVS
+    func run(ec: EC) throws -> ATVS
 }
 
-protocol FirstEntityCollectionResolver: Resolver
-    where EC == FirstEntityCollection,
-        ATVS == PaddingVM<ViewState<
-                    SectionVM<
-                        MainFirstProfileTitle2View.Model,
-                        MainFirstProfileContentView.Model,
-                        MainFirstProfileBottomView.Model
-                    >
-                >> {
+extension Resolver {
+    func run(ec: EC) throws -> ATVS {
+        throw NSError(
+            domain: "NotImplementedException",
+            code: -1,
+            userInfo: ["msg": "not implemented `run(ec:)` function"]
+        )
+    }
+}
+
+class FirstEntityCollectionResolver: Resolver {
+    typealias EC = FirstEntityCollection
+    typealias ATVS = PaddingVM<ViewState<
+        SectionVM<
+            MainFirstProfileTitle2View.Model,
+            MainFirstProfileContentView.Model,
+            MainFirstProfileBottomView.Model
+        >
+    >>
 }
 
 extension MainPackage {
@@ -45,3 +55,4 @@ extension MainPackage {
         }
     }
 }
+

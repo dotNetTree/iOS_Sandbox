@@ -63,4 +63,3 @@ class MainFirstVC: UIViewController, ThrottleObserver {
         section1.render()
     }
 }
-
