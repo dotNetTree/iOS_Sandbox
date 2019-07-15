@@ -113,8 +113,8 @@ enum Looper {
             return oscillator
         }()
 
-        lazy var _sequence = Sequence(looper: self)
-        var sequence: Sequence {
+        private lazy var _sequence = Sequence(looper: self)
+        private var sequence: Sequence {
             get { return _sequence }
         }
 
@@ -130,7 +130,7 @@ enum Looper {
             if gap > 0.0 {
                 fps = 1.0 / gap
             }
-            print(fps)
+//            print(fps)
             previus = c
             guard !items.isEmpty else { return }
             hasRemoveItems = false
