@@ -15,8 +15,25 @@ fileprivate let DOWN_FRAME = CGRect(x: -100, y: -100, width: 1, height: 1)
 fileprivate typealias Now = () -> Double
 fileprivate let now: Now = { Date.timeIntervalSinceReferenceDate }
 
+protocol LooperOscillator {
+    var loopers: [Looper.Looper] { get set }
+    func act()
+}
 enum Looper {
-    private class Oscillator: UIView {
+    private class Oscillator2: LooperOscillator {
+        lazy var displayLink: CADisplayLink? = { [weak self] in
+            guard let self = self else { return nil }
+            return CADisplayLink(target: self, selector: #selector(update))
+        }()
+        var loopers = [Looper]()
+        func act() {
+            displayLink?.add(to: .main, forMode: .default)
+        }
+        @objc func update() {
+            loopers.forEach { $0.loop() }
+        }
+    }
+    private class Oscillator: UIView, LooperOscillator {
         let serialQueue = DispatchQueue(label: "com.chela.lopper.oscillator.queue")
         var loopers = [Looper]()
         var isActing = false
@@ -35,7 +52,7 @@ enum Looper {
             serialQueue.async { [weak self] in
                 guard let self = self else { return }
                 while true {
-                    usleep(16000)
+                    usleep(15000)
                     DispatchQueue.main.sync {
                         self.frame = self.frame == UP_FRAME ? DOWN_FRAME : UP_FRAME
                         self.setNeedsDisplay()
@@ -89,9 +106,10 @@ enum Looper {
         private var add      = [Item]()
         private var itemPool = [Item]()
 
-        private static let oscillator = { () -> Oscillator in
-            let oscillator = Oscillator(frame: UP_FRAME)
-            UIApplication.shared.delegate?.window??.addSubview(oscillator)
+        private static var oscillator = { () -> LooperOscillator in
+//            let oscillator = Oscillator(frame: UP_FRAME)
+//            UIApplication.shared.delegate?.window??.addSubview(oscillator)
+            let oscillator = Oscillator2()
             return oscillator
         }()
 
@@ -166,13 +184,20 @@ enum Looper {
                 concurrentQueue.async(flags: .barrier) { [weak self] in
                     guard let self = self else { return }
                     if self.hasRemoveItems {
-                        for i in stride(from: (self.items.count - 1), through: 0, by: -1) {
+                        for i in (0..<self.items.count).reversed() {
                             let item = self.items[i]
                             if item.marked {
                                 self.items.remove(at: i)
                                 self.itemPool.append(item)
                             }
                         }
+//                        for i in stride(from: (self.items.count - 1), through: 0, by: -1) {
+//                            let item = self.items[i]
+//                            if item.marked {
+//                                self.items.remove(at: i)
+//                                self.itemPool.append(item)
+//                            }
+//                        }
                     }
                     if !self.add.isEmpty {
                         self.items = self.items + self.add
@@ -190,6 +215,7 @@ enum Looper {
                 $0.block = i.block
                 $0.ended = i.ended
                 $0.next  = nil
+                $0.isStop = false
                 $0.marked = false
             }
         }
@@ -201,9 +227,9 @@ enum Looper {
             item.end = item.term == -1.0 ? -1.0 : item.start + item.term
             concurrentQueue.sync(flags: .barrier) { [weak self] in
                 self?.items.append(item)
-                print("itemPool count := \(self!.itemPool.count)")
             }
-            return Sequence(looper: self)
+            sequence.current = item
+            return sequence
         }
 
 
@@ -225,6 +251,7 @@ enum Looper {
         init(looper: Looper) {
             self.looper = looper
         }
+        @discardableResult
         func next(block: (Looper.ItemDSL) -> Void) -> Sequence {
             let item = looper.getItem(also(Looper.ItemDSL()) { block($0) })
             current?.next = item

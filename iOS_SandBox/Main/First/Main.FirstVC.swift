@@ -30,23 +30,24 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
     var model: FirstBusinessLogic!
 //    var resolver: Resolver<FirstEntityCollection, MainPackage.At>!
+    let looper = Looper.Looper()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         MainPackage.factory(vc: self)
 
-        let looper = Looper.Looper()
-
         section1.content.body.click = { [weak self] add in
-            switch add {
-            case true:
-                looper.pause()
-            default:
-                looper.resume()
-            }
-//            self?.model.age(add: add)
+            self?.model.age(add: add)
         }
-        section1.content.tail.click = { print("next page gogogo...") }
+        var pause = false
+        section1.content.tail.click = { [weak self] in
+            switch !pause {
+            case true: self?.looper.pause()
+            default:   self?.looper.resume()
+            }
+            pause = !pause
+//            print("next page gogogo...")
+        }
 
         container.addArrangedSubview(section1)
         container.addArrangedSubview(section2)
@@ -59,14 +60,12 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
         after(delay: 1) {
 
-
-
             let sW = UIScreen.main.bounds.size.width
             let sH = UIScreen.main.bounds.size.height
             let halfW = Double(sW / 2)
             let halfH = Double(sH / 2)
 
-            for _ in 1...3000 {
+            for _ in 1...2 {
 
                 let size = CGFloat.random(in: 3...8.0)
                 let r = CGFloat.random(in: 0.3...0.7)
@@ -98,10 +97,10 @@ class MainFirstVC: UIViewController, ThrottleObserver {
                 let delay = Double.random(in: 0...3)
                 let term  = Double.random(in: 0.7...1.5) + 2
 
-                looper.invoke { (dsl) in
+                self.looper.invoke { (dsl) in
                     dsl.delay = delay
                     dsl.time  = term
-                    dsl.isInfinity = true
+//                    dsl.isInfinity = true
                     dsl.block = { [weak dot] item in
                         guard let dot = dot else { return }
                         switch item.rate {
@@ -115,16 +114,36 @@ class MainFirstVC: UIViewController, ThrottleObserver {
                             heightAnchor.constant = CGFloat(item.sineIn(from: Double(size), to: Double(size + 20)))
                             dot.layer.cornerRadius = heightAnchor.constant / 2
                         }
+//                        item.isStop = true
                     }
 //                dsl.ended = { [weak dot] _ in
 //                    print("deleted")
 ////                    dot?.removeFromSuperview()
 //                }
+                }.next { (dsl) in
+                    dsl.delay = delay
+                    dsl.time  = term
+                    //                    dsl.isInfinity = true
+                    dsl.block = { [weak dot] item in
+                        guard let dot = dot else { return }
+                        switch item.rate {
+                        case 1:
+                            dot.alpha = 0
+                        default:
+                            dot.alpha = CGFloat(item.sineIn(from: 0, to: 1))
+                            leftAnchor.constant   = CGFloat(item.sineInOut(from: Double(x) , to: halfW))
+                            topAnchor.constant    = CGFloat(item.sineInOut(from: Double(y) , to: halfH))
+                            widthAnchor.constant  = CGFloat(item.sineIn(from: Double(size + 20) , to: Double(size)))
+                            heightAnchor.constant = CGFloat(item.sineIn(from: Double(size + 20), to: Double(size)))
+                            dot.layer.cornerRadius = heightAnchor.constant / 2
+                        }
+                        //                        item.isStop = true
+                    }
                 }
 
             }
 
-            looper.act()
+            self.looper.act()
 
         }
     }
@@ -141,6 +160,14 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
     func updated() {
         section1.set(with: MainPackage.MainSection().run(ec: model))
-        section1.render()
+
+//        looper.invoke { [weak section1] dsl in
+//            guard let section1 = section1 else { return }
+//            dsl.block = { [weak section1] item in
+//                section1?.render()
+//                item.isStop = true
+//            }
+//        }
+
     }
 }
