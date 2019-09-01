@@ -65,6 +65,7 @@ class MainFirstVC: UIViewController, ThrottleObserver {
             switch isATest {
             case true:      // A Test
                 composed = ComposerVC.instance(with: [
+                    TestRendererVC.self,
                     TestANaviVC.self,
                     { TestInformationVC.instance() },
                     { TestANaviVC.instance() },

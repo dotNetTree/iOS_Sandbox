@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <viewController id="4mE-jw-rpI" customClass="TestRendererVC" customModule="iOS_SandBox" customModuleProvider="target">
+            <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="5Xl-xl-2fF">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ixC-j5-CsX">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" priority="999" constant="300" id="0Ll-DB-IIj"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstItem="ixC-j5-CsX" firstAttribute="top" secondItem="5Xl-xl-2fF" secondAttribute="top" id="CX1-d8-jqK"/>
+                    <constraint firstItem="ixC-j5-CsX" firstAttribute="leading" secondItem="5Xl-xl-2fF" secondAttribute="leading" id="RdP-5S-6gq"/>
+                    <constraint firstAttribute="bottom" secondItem="ixC-j5-CsX" secondAttribute="bottom" id="SGM-9p-Aiq"/>
+                    <constraint firstAttribute="trailing" secondItem="ixC-j5-CsX" secondAttribute="trailing" id="xam-yp-ATa"/>
+                </constraints>
+            </view>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <size key="freeformSize" width="414" height="300"/>
+            <connections>
+                <outlet property="container" destination="ixC-j5-CsX" id="Bca-5y-ewf"/>
+                <outlet property="containerH" destination="0Ll-DB-IIj" id="pKV-tj-oqZ"/>
+            </connections>
+        </viewController>
+    </objects>
+</document>
