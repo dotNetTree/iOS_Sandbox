@@ -9,56 +9,33 @@
 import Foundation
 import UIKit
 
-fileprivate let UP_FRAME   = CGRect(x: -100, y: -101, width: 1, height: 1)
-fileprivate let DOWN_FRAME = CGRect(x: -100, y: -100, width: 1, height: 1)
+/// Main Looper
+let looper = also(Looper.Looper()) {
+    $0.start()
+}
 
 fileprivate typealias Now = () -> Double
 fileprivate let now: Now = { Date.timeIntervalSinceReferenceDate }
 
-protocol LooperOscillator {
-    var loopers: [Looper.Looper] { get set }
-    func act()
-}
 enum Looper {
-    private class Oscillator2: LooperOscillator {
-        lazy var displayLink: CADisplayLink? = { [weak self] in
-            guard let self = self else { return nil }
-            return CADisplayLink(target: self, selector: #selector(update))
-        }()
+    private class Updater {
+        private var displayLink: CADisplayLink?
+        private var activated = false
         var loopers = [Looper]()
-        func act() {
-            displayLink?.add(to: .main, forMode: .default)
+        func start() {
+            if !activated {
+                displayLink = CADisplayLink(target: self, selector: #selector(update))
+                displayLink?.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
+//                displayLink?.add(to: .main, forMode: .default)
+            }
+        }
+        func stop() {
+            displayLink?.invalidate()
+            displayLink = nil
+            activated = false
         }
         @objc func update() {
             loopers.forEach { $0.loop() }
-        }
-    }
-    private class Oscillator: UIView, LooperOscillator {
-        let serialQueue = DispatchQueue(label: "com.chela.lopper.oscillator.queue")
-        var loopers = [Looper]()
-        var isActing = false
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-        }
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        override func draw(_ rect: CGRect) {
-            loopers.forEach { $0.loop() }
-        }
-        func act() {
-            guard isActing == false else { return }
-            isActing = true
-            serialQueue.async { [weak self] in
-                guard let self = self else { return }
-                while true {
-                    usleep(15000)
-                    DispatchQueue.main.sync {
-                        self.frame = self.frame == UP_FRAME ? DOWN_FRAME : UP_FRAME
-                        self.setNeedsDisplay()
-                    }
-                }
-            }
         }
     }
 
@@ -106,21 +83,16 @@ enum Looper {
         private var add      = [Item]()
         private var itemPool = [Item]()
 
-        private static var oscillator = { () -> LooperOscillator in
-//            let oscillator = Oscillator(frame: UP_FRAME)
-//            UIApplication.shared.delegate?.window??.addSubview(oscillator)
-            let oscillator = Oscillator2()
-            return oscillator
-        }()
+        private static let updater = Updater()
 
         private lazy var _sequence = Sequence(looper: self)
         private var sequence: Sequence {
             get { return _sequence }
         }
 
-        func act() {
-            Looper.oscillator.loopers += [self]
-            Looper.oscillator.act()
+        func start() {
+            Looper.updater.loopers += [self]
+            Looper.updater.start()
         }
 
         fileprivate func loop() {
@@ -187,17 +159,12 @@ enum Looper {
                         for i in (0..<self.items.count).reversed() {
                             let item = self.items[i]
                             if item.marked {
+                                item.block = Item.emptyBlock
+                                item.ended = Item.emptyBlock
                                 self.items.remove(at: i)
                                 self.itemPool.append(item)
                             }
                         }
-//                        for i in stride(from: (self.items.count - 1), through: 0, by: -1) {
-//                            let item = self.items[i]
-//                            if item.marked {
-//                                self.items.remove(at: i)
-//                                self.itemPool.append(item)
-//                            }
-//                        }
                     }
                     if !self.add.isEmpty {
                         self.items = self.items + self.add
@@ -225,13 +192,17 @@ enum Looper {
             let item = getItem(also(ItemDSL()) { block($0) })
             item.start += now()
             item.end = item.term == -1.0 ? -1.0 : item.start + item.term
-            concurrentQueue.sync(flags: .barrier) { [weak self] in
+            concurrentQueue.async(flags: .barrier) { [weak self] in
                 self?.items.append(item)
             }
             sequence.current = item
             return sequence
         }
 
+        @discardableResult
+        func once(_ block: @escaping (Item) -> Void) -> Sequence {
+            return invoke { $0.block = { block($0); $0.isStop = true } }
+        }
 
         func pause(){
             if (pauseStart == 0.0) { pauseStart = now() }
@@ -254,6 +225,15 @@ enum Looper {
         @discardableResult
         func next(block: (Looper.ItemDSL) -> Void) -> Sequence {
             let item = looper.getItem(also(Looper.ItemDSL()) { block($0) })
+            current?.next = item
+            current = item
+            return self
+        }
+        @discardableResult
+        func nextOnce(_ block: @escaping (Item) -> Void) -> Sequence {
+            let item = looper.getItem(also(Looper.ItemDSL()) {
+                $0.block = { block($0); $0.isStop = true }
+            })
             current?.next = item
             current = item
             return self
@@ -296,4 +276,12 @@ extension Looper.Item {
         }
     }
 
+}
+
+class Completion {
+    static let EMPTY = Completion(action: { })
+    var action: VoidClosure
+    init(action: @escaping VoidClosure) {
+        self.action = action
+    }
 }
