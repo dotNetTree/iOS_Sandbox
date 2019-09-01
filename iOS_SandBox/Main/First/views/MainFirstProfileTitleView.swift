@@ -27,7 +27,7 @@ class MainFirstProfileTitleView: UIView {
     @IBOutlet weak var btnTest: UIButton!
 }
 
-class Renderer<View, Model>: Renderable where View: UIView, Model: Equatable {
+class ViewWrapper<View, Model>: Renderable where View: UIView, Model: Equatable {
     var current: Model?
     var pending: Model?
     let view: View
@@ -55,7 +55,7 @@ class Renderer<View, Model>: Renderable where View: UIView, Model: Equatable {
 }
 
 extension Renderable
-    where Self: Renderer<MainFirstProfileTitleView, ViewState<Title>> {
+    where Self: ViewWrapper<MainFirstProfileTitleView, ViewState<Title>> {
     func _render() {
         guard let pending = pending else { return }
         switch pending {

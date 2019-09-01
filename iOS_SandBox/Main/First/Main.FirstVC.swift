@@ -27,7 +27,7 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
     let section3 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
     let section4 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
-    let renderder = Renderer<MainFirstProfileTitleView, ViewState<Title>>()
+    let renderder = ViewWrapper<MainFirstProfileTitleView, ViewState<Title>>()
     var model: FirstBusinessLogic!
 //    var resolver: Resolver<FirstEntityCollection, MainPackage.At>!
 //    let looper = Looper.Looper()
