@@ -27,10 +27,10 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
     let section3 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
     let section4 = PaddingView<VSectionView<MainFirstProfileTitle2View, MainFirstProfileContentView, MainFirstProfileBottomView>>()
-
+    let renderder = Renderer<MainFirstProfileTitleView, ViewState<Title>>()
     var model: FirstBusinessLogic!
 //    var resolver: Resolver<FirstEntityCollection, MainPackage.At>!
-    let looper = Looper.Looper()
+//    let looper = Looper.Looper()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,202 +40,46 @@ class MainFirstVC: UIViewController, ThrottleObserver {
             self?.model.age(add: add)
         }
         var pause = false
-        section1.content.tail.click = { [weak self] in
+        section1.content.tail.click = {
             switch !pause {
-            case true: self?.looper.pause()
-            default:   self?.looper.resume()
+            case true: looper.pause()
+            default:   looper.resume()
             }
             pause = !pause
 //            print("next page gogogo...")
         }
 
+//        container.addSubview(renderder.view)
         container.addArrangedSubview(section1)
-        container.addArrangedSubview(section2)
-        container.addArrangedSubview(section3)
-        container.addArrangedSubview(section4)
+//        container.addArrangedSubview(section2)
+//        container.addArrangedSubview(section3)
+//        container.addArrangedSubview(section4)
         model.throttle(open: true)
         model.throttle(open: false)
 
+        after { [weak self] in
 
+            let composed: ComposerVC
 
-        after(delay: 1) {
-
-            let sW = UIScreen.main.bounds.size.width
-            let sH = UIScreen.main.bounds.size.height
-            let halfW = Double(sW / 2)
-            let halfH = Double(sH / 2)
-
-            for _ in 1...200 {
-
-                let size = CGFloat.random(in: 3...8.0)
-                let r = CGFloat.random(in: 0.3...0.7)
-                let g = CGFloat.random(in: 0.3...0.7)
-                let b = CGFloat.random(in: 0.3...0.7)
-
-                var x: CGFloat; var y: CGFloat
-                switch Int.random(in: 0...3) {
-                case 0:  x = 0;  y = CGFloat.random(in: 0...(sH - size))
-                case 1:  x = sW - size; y = CGFloat.random(in: 0...(sH - size))
-                case 2:  y = 0;  x = CGFloat.random(in: 0...(sW - size))
-                default: y = sH - size; x = CGFloat.random(in: 0...(sW - size))
-                }
-
-                let dot = also(UIView()) {
-                    $0.backgroundColor = UIColor(red: r, green: g, blue: b, alpha: 1)
-                    $0.layer.cornerRadius = size / 2
-                    $0.isUserInteractionEnabled = false
-                }
-                self.view.addSubview(dot)
-                dot.translatesAutoresizingMaskIntoConstraints = false
-                let leftAnchor   = dot.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: sW / 2)
-                let topAnchor    = dot.topAnchor.constraint(equalTo: self.view.topAnchor, constant: sH / 2)
-                let widthAnchor  = dot.widthAnchor.constraint(equalToConstant: size)
-                let heightAnchor = dot.heightAnchor.constraint(equalToConstant: size)
-                NSLayoutConstraint.activate([
-                    leftAnchor, topAnchor, widthAnchor, heightAnchor
+            let isATest = true
+            switch isATest {
+            case true:      // A Test
+                composed = ComposerVC.instance(with: [
+                    TestANaviVC.self,
+                    { TestInformationVC.instance() },
+                    { TestANaviVC.instance() },
+                    TestInformationVC.self
                 ])
-                let delay = Double.random(in: 0...3)
-                let term  = Double.random(in: 0.7...1.5) + 2
-
-                self.looper.invoke { (dsl) in
-                    dsl.delay = delay
-                    dsl.time  = term
-//                    dsl.isInfinity = true
-                    dsl.block = { [weak dot] item in
-                        guard let dot = dot else { return }
-                        switch item.rate {
-                        case 1:
-                            dot.alpha = 0
-                        default:
-                            dot.alpha = CGFloat(item.sineIn(from: 1, to: 0))
-                            leftAnchor.constant   = CGFloat(item.sineInOut(from: halfW, to: Double(x)))
-                            topAnchor.constant    = CGFloat(item.sineInOut(from: halfH, to: Double(y)))
-                            widthAnchor.constant  = CGFloat(item.sineIn(from: Double(size), to: Double(size + 20)))
-                            heightAnchor.constant = CGFloat(item.sineIn(from: Double(size), to: Double(size + 20)))
-                            dot.layer.cornerRadius = heightAnchor.constant / 2
-                        }
-//                        item.isStop = true
-                    }
-//                dsl.ended = { [weak dot] _ in
-//                    print("deleted")
-////                    dot?.removeFromSuperview()
-//                }
-                }.next { (dsl) in
-                    dsl.delay = delay
-                    dsl.time  = term
-                    //                    dsl.isInfinity = true
-                    dsl.block = { [weak dot] item in
-                        guard let dot = dot else { return }
-                        switch item.rate {
-                        case 1:
-                            dot.alpha = 0
-                        default:
-                            dot.alpha = CGFloat(item.sineIn(from: 0, to: 1))
-                            leftAnchor.constant   = CGFloat(item.sineInOut(from: Double(x) , to: halfW))
-                            topAnchor.constant    = CGFloat(item.sineInOut(from: Double(y) , to: halfH))
-                            widthAnchor.constant  = CGFloat(item.sineIn(from: Double(size + 20) , to: Double(size)))
-                            heightAnchor.constant = CGFloat(item.sineIn(from: Double(size + 20), to: Double(size)))
-                            dot.layer.cornerRadius = heightAnchor.constant / 2
-                        }
-                        //                        item.isStop = true
-                    }
-                }
-
+            case false:     // B Test
+                composed = ComposerVC.instance(with: [
+                    { TestBNaviVC.instance() },
+                    { TestInformationVC.instance() }
+                ])
             }
 
-            self.looper.act()
-
+            self?.navigationController?.pushViewController(composed, animated: true)
         }
 
-
-        after(delay: 20) {
-
-            let sW = UIScreen.main.bounds.size.width
-            let sH = UIScreen.main.bounds.size.height
-            let halfW = Double(sW / 2)
-            let halfH = Double(sH / 2)
-
-            for _ in 1...200 {
-
-                let size = CGFloat.random(in: 3...8.0)
-                let r = CGFloat.random(in: 0.3...0.7)
-                let g = CGFloat.random(in: 0.3...0.7)
-                let b = CGFloat.random(in: 0.3...0.7)
-
-                var x: CGFloat; var y: CGFloat
-                switch Int.random(in: 0...3) {
-                case 0:  x = 0;  y = CGFloat.random(in: 0...(sH - size))
-                case 1:  x = sW - size; y = CGFloat.random(in: 0...(sH - size))
-                case 2:  y = 0;  x = CGFloat.random(in: 0...(sW - size))
-                default: y = sH - size; x = CGFloat.random(in: 0...(sW - size))
-                }
-
-                let dot = also(UIView()) {
-                    $0.backgroundColor = UIColor(red: r, green: g, blue: b, alpha: 1)
-                    $0.layer.cornerRadius = size / 2
-                    $0.isUserInteractionEnabled = false
-                }
-                self.view.addSubview(dot)
-                dot.translatesAutoresizingMaskIntoConstraints = false
-                let leftAnchor   = dot.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: sW / 2)
-                let topAnchor    = dot.topAnchor.constraint(equalTo: self.view.topAnchor, constant: sH / 2)
-                let widthAnchor  = dot.widthAnchor.constraint(equalToConstant: size)
-                let heightAnchor = dot.heightAnchor.constraint(equalToConstant: size)
-                NSLayoutConstraint.activate([
-                    leftAnchor, topAnchor, widthAnchor, heightAnchor
-                    ])
-                let delay = Double.random(in: 0...3)
-                let term  = Double.random(in: 0.7...1.5) + 2
-
-                self.looper.invoke { (dsl) in
-                    dsl.delay = delay
-                    dsl.time  = term
-                    //                    dsl.isInfinity = true
-                    dsl.block = { [weak dot] item in
-                        guard let dot = dot else { return }
-                        switch item.rate {
-                        case 1:
-                            dot.alpha = 0
-                        default:
-                            dot.alpha = CGFloat(item.sineIn(from: 1, to: 0))
-                            leftAnchor.constant   = CGFloat(item.sineInOut(from: halfW, to: Double(x)))
-                            topAnchor.constant    = CGFloat(item.sineInOut(from: halfH, to: Double(y)))
-                            widthAnchor.constant  = CGFloat(item.sineIn(from: Double(size), to: Double(size + 20)))
-                            heightAnchor.constant = CGFloat(item.sineIn(from: Double(size), to: Double(size + 20)))
-                            dot.layer.cornerRadius = heightAnchor.constant / 2
-                        }
-                        //                        item.isStop = true
-                    }
-                    //                dsl.ended = { [weak dot] _ in
-                    //                    print("deleted")
-                    ////                    dot?.removeFromSuperview()
-                    //                }
-                    }.next { (dsl) in
-                        dsl.delay = delay
-                        dsl.time  = term
-                        //                    dsl.isInfinity = true
-                        dsl.block = { [weak dot] item in
-                            guard let dot = dot else { return }
-                            switch item.rate {
-                            case 1:
-                                dot.alpha = 0
-                            default:
-                                dot.alpha = CGFloat(item.sineIn(from: 0, to: 1))
-                                leftAnchor.constant   = CGFloat(item.sineInOut(from: Double(x) , to: halfW))
-                                topAnchor.constant    = CGFloat(item.sineInOut(from: Double(y) , to: halfH))
-                                widthAnchor.constant  = CGFloat(item.sineIn(from: Double(size + 20) , to: Double(size)))
-                                heightAnchor.constant = CGFloat(item.sineIn(from: Double(size + 20), to: Double(size)))
-                                dot.layer.cornerRadius = heightAnchor.constant / 2
-                            }
-                            //                        item.isStop = true
-                        }
-                }
-
-            }
-
-//            self.looper.act()
-
-        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -250,14 +94,12 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
     func updated() {
         section1.set(with: MainPackage.MainSection().run(ec: model))
-
-//        looper.invoke { [weak section1] dsl in
-//            guard let section1 = section1 else { return }
-//            dsl.block = { [weak section1] item in
-//                section1?.render()
-//                item.isStop = true
-//            }
-//        }
-
+        looper.once { [weak section1] _ in
+            section1?.render()
+        }.nextOnce { _ in
+            print("마지막으로 한번 출력!!!")
+            print("마지막으로 한번 출력!!!")
+            print("마지막으로 한번 출력!!!")
+        }
     }
 }

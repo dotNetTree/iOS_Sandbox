@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <viewController id="8OV-CO-pNx" customClass="TestBNaviVC" customModule="iOS_SandBox" customModuleProvider="target">
+            <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="t6H-rk-U60">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Fw-ws-ON6">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B Test 화면" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1K0-eG-MR9">
+                                <rect key="frame" x="136" y="31.5" width="142" height="37"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="31"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="0.20392156859999999" blue="0.47058823529999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="1K0-eG-MR9" firstAttribute="centerX" secondItem="9Fw-ws-ON6" secondAttribute="centerX" id="NDh-du-bws"/>
+                            <constraint firstItem="1K0-eG-MR9" firstAttribute="centerY" secondItem="9Fw-ws-ON6" secondAttribute="centerY" id="X8v-UY-7tj"/>
+                            <constraint firstAttribute="height" priority="999" constant="200" id="edY-mB-7UB"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstItem="9Fw-ws-ON6" firstAttribute="leading" secondItem="t6H-rk-U60" secondAttribute="leading" id="Io9-Cg-RGk"/>
+                    <constraint firstItem="9Fw-ws-ON6" firstAttribute="top" secondItem="t6H-rk-U60" secondAttribute="top" id="X97-Hd-Qsi"/>
+                    <constraint firstAttribute="trailing" secondItem="9Fw-ws-ON6" secondAttribute="trailing" id="YDZ-6o-Gq7"/>
+                    <constraint firstAttribute="bottom" secondItem="9Fw-ws-ON6" secondAttribute="bottom" id="sfi-nP-otm"/>
+                </constraints>
+            </view>
+            <extendedEdge key="edgesForExtendedLayout"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <size key="freeformSize" width="414" height="100"/>
+            <point key="canvasLocation" x="137.68115942028987" y="132.58928571428572"/>
+        </viewController>
+    </objects>
+</document>

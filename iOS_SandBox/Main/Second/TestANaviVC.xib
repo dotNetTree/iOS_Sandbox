@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <viewController id="TLY-Xh-nIB" customClass="TestANaviVC" customModule="iOS_SandBox" customModuleProvider="target">
+            <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="HVt-5A-PDb">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dgf-wp-jIU">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A Test 화면" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wij-7W-ioy">
+                                <rect key="frame" x="136" y="31.5" width="142.5" height="37"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="31"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="0.20392156859999999" blue="0.47058823529999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" priority="999" constant="200" id="9LO-OK-Ryw"/>
+                            <constraint firstItem="wij-7W-ioy" firstAttribute="centerY" secondItem="dgf-wp-jIU" secondAttribute="centerY" id="Lfj-7g-LtT"/>
+                            <constraint firstItem="wij-7W-ioy" firstAttribute="centerX" secondItem="dgf-wp-jIU" secondAttribute="centerX" id="iiu-ko-HD4"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstItem="dgf-wp-jIU" firstAttribute="top" secondItem="HVt-5A-PDb" secondAttribute="top" id="UdD-Lj-aYf"/>
+                    <constraint firstItem="dgf-wp-jIU" firstAttribute="leading" secondItem="HVt-5A-PDb" secondAttribute="leading" id="anH-2F-m56"/>
+                    <constraint firstAttribute="bottom" secondItem="dgf-wp-jIU" secondAttribute="bottom" id="s2C-Wv-aN5"/>
+                    <constraint firstAttribute="trailing" secondItem="dgf-wp-jIU" secondAttribute="trailing" id="vMU-y0-tUO"/>
+                </constraints>
+            </view>
+            <extendedEdge key="edgesForExtendedLayout"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <size key="freeformSize" width="414" height="100"/>
+            <point key="canvasLocation" x="137.68115942028987" y="132.58928571428572"/>
+        </viewController>
+    </objects>
+</document>

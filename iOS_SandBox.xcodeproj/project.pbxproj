@@ -24,8 +24,17 @@
 		A608BBEC22719AFF001BE2D4 /* MainFirstProfileBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A608BBEB22719AFF001BE2D4 /* MainFirstProfileBottomView.swift */; };
 		A608BBEE2271AF71001BE2D4 /* MainFirstProfileTitle2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = A608BBED2271AF71001BE2D4 /* MainFirstProfileTitle2View.swift */; };
 		A608BBF02271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib in Resources */ = {isa = PBXBuildFile; fileRef = A608BBEF2271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib */; };
+		A63361D2231908A700715173 /* ComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63361D1231908A700715173 /* ComposerVC.swift */; };
+		A63361DB23190D2C00715173 /* TestANaviVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = A63361DA23190D2C00715173 /* TestANaviVC.xib */; };
+		A63361DD23190E5100715173 /* TestInformationVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = A63361DC23190E5100715173 /* TestInformationVC.xib */; };
+		A63361DF2319176F00715173 /* TestBNaviVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = A63361DE2319176F00715173 /* TestBNaviVC.xib */; };
+		A635C5F323019D370062FE48 /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A635C5F223019D370062FE48 /* Animator.swift */; };
 		A6582CC322D4DED5005FBBC4 /* Looper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6582CC222D4DED5005FBBC4 /* Looper.swift */; };
 		A6582CD522D6FCDD005FBBC4 /* Funcs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6582CD422D6FCDD005FBBC4 /* Funcs.swift */; };
+		A69D8E0B22F2DE2300A849A7 /* ExceptionCatcher.h in Sources */ = {isa = PBXBuildFile; fileRef = A69D8E0A22F2DE2300A849A7 /* ExceptionCatcher.h */; };
+		A6B4E44C231B77F60089B5F9 /* TestNaviVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B4E44B231B77F60089B5F9 /* TestNaviVC.swift */; };
+		A6B4E44E231B78210089B5F9 /* TestInformationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B4E44D231B78210089B5F9 /* TestInformationVC.swift */; };
+		A6B4E451231B7AAF0089B5F9 /* TestCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B4E450231B7AAF0089B5F9 /* TestCode.swift */; };
 		A6F5A9CB2259AC3E00F56367 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */; };
 		A6F5A9D02259AC3E00F56367 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9CE2259AC3E00F56367 /* Main.storyboard */; };
 		A6F5A9D22259AC3F00F56367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9D12259AC3F00F56367 /* Assets.xcassets */; };
@@ -133,8 +142,18 @@
 		A608BBEB22719AFF001BE2D4 /* MainFirstProfileBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstProfileBottomView.swift; sourceTree = "<group>"; };
 		A608BBED2271AF71001BE2D4 /* MainFirstProfileTitle2View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFirstProfileTitle2View.swift; sourceTree = "<group>"; };
 		A608BBEF2271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainFirstProfileTitle2View.xib; sourceTree = "<group>"; };
+		A63361D1231908A700715173 /* ComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC.swift; sourceTree = "<group>"; };
+		A63361DA23190D2C00715173 /* TestANaviVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestANaviVC.xib; sourceTree = "<group>"; };
+		A63361DC23190E5100715173 /* TestInformationVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestInformationVC.xib; sourceTree = "<group>"; };
+		A63361DE2319176F00715173 /* TestBNaviVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestBNaviVC.xib; sourceTree = "<group>"; };
+		A635C5F223019D370062FE48 /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 		A6582CC222D4DED5005FBBC4 /* Looper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Looper.swift; sourceTree = "<group>"; };
 		A6582CD422D6FCDD005FBBC4 /* Funcs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Funcs.swift; sourceTree = "<group>"; };
+		A69D8E0922F2DE2300A849A7 /* iOS_SandBox-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iOS_SandBox-Bridging-Header.h"; sourceTree = "<group>"; };
+		A69D8E0A22F2DE2300A849A7 /* ExceptionCatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExceptionCatcher.h; sourceTree = "<group>"; };
+		A6B4E44B231B77F60089B5F9 /* TestNaviVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNaviVC.swift; sourceTree = "<group>"; };
+		A6B4E44D231B78210089B5F9 /* TestInformationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInformationVC.swift; sourceTree = "<group>"; };
+		A6B4E450231B7AAF0089B5F9 /* TestCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCode.swift; sourceTree = "<group>"; };
 		A6F5A9C72259AC3E00F56367 /* iOS_SandBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS_SandBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A6F5A9CF2259AC3E00F56367 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -189,6 +208,7 @@
 				8EB01EFE227A86110036A0AB /* After.swift */,
 				8E488A3B228D641D00001289 /* Protocols.swift */,
 				8E488A3D228D649E00001289 /* Log.swift */,
+				A635C5F223019D370062FE48 /* Animator.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -199,6 +219,26 @@
 				A6582CD422D6FCDD005FBBC4 /* Funcs.swift */,
 			);
 			path = Function;
+			sourceTree = "<group>";
+		};
+		A6B4E44A231B77BE0089B5F9 /* Second */ = {
+			isa = PBXGroup;
+			children = (
+				A6B4E44B231B77F60089B5F9 /* TestNaviVC.swift */,
+				A63361DA23190D2C00715173 /* TestANaviVC.xib */,
+				A63361DE2319176F00715173 /* TestBNaviVC.xib */,
+				A6B4E44D231B78210089B5F9 /* TestInformationVC.swift */,
+				A63361DC23190E5100715173 /* TestInformationVC.xib */,
+			);
+			path = Second;
+			sourceTree = "<group>";
+		};
+		A6B4E44F231B7A920089B5F9 /* _Test */ = {
+			isa = PBXGroup;
+			children = (
+				A6B4E450231B7AAF0089B5F9 /* TestCode.swift */,
+			);
+			path = _Test;
 			sourceTree = "<group>";
 		};
 		A6F5A9BE2259AC3E00F56367 = {
@@ -221,6 +261,7 @@
 		A6F5A9C92259AC3E00F56367 /* iOS_SandBox */ = {
 			isa = PBXGroup;
 			children = (
+				A6B4E44F231B7A920089B5F9 /* _Test */,
 				A6582CCC22D6FCAF005FBBC4 /* Function */,
 				A6F5A9EC225B619000F56367 /* Extensions */,
 				A6F5A9DC2259AD3900F56367 /* Framework */,
@@ -241,6 +282,9 @@
 				A6F5A9DF2259AE7000F56367 /* Renderable.swift */,
 				A6F5A9E12259B18800F56367 /* Throttle.swift */,
 				A6582CC222D4DED5005FBBC4 /* Looper.swift */,
+				A63361D1231908A700715173 /* ComposerVC.swift */,
+				A69D8E0A22F2DE2300A849A7 /* ExceptionCatcher.h */,
+				A69D8E0922F2DE2300A849A7 /* iOS_SandBox-Bridging-Header.h */,
 			);
 			path = Framework;
 			sourceTree = "<group>";
@@ -249,6 +293,7 @@
 			isa = PBXGroup;
 			children = (
 				A6F5A9E42259B2B500F56367 /* First */,
+				A6B4E44A231B77BE0089B5F9 /* Second */,
 				A6F5A9CE2259AC3E00F56367 /* Main.storyboard */,
 			);
 			path = Main;
@@ -327,6 +372,7 @@
 				TargetAttributes = {
 					A6F5A9C62259AC3E00F56367 = {
 						CreatedOnToolsVersion = 10.2;
+						LastSwiftMigration = 1030;
 					};
 				};
 			};
@@ -412,8 +458,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A608BBE82271995D001BE2D4 /* MainFirstProfileTitleView.xib in Resources */,
+				A63361DD23190E5100715173 /* TestInformationVC.xib in Resources */,
 				A608BBEA22719A55001BE2D4 /* MainFirstProfileBottomView.xib in Resources */,
+				A63361DF2319176F00715173 /* TestBNaviVC.xib in Resources */,
 				A608BBF02271AF8E001BE2D4 /* MainFirstProfileTitle2View.xib in Resources */,
+				A63361DB23190D2C00715173 /* TestANaviVC.xib in Resources */,
 				A6F5A9D52259AC3F00F56367 /* LaunchScreen.storyboard in Resources */,
 				A6F5A9D22259AC3F00F56367 /* Assets.xcassets in Resources */,
 				A6F5A9F4225B646B00F56367 /* MainFirstProfileContentView.xib in Resources */,
@@ -428,12 +477,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A635C5F323019D370062FE48 /* Animator.swift in Sources */,
 				A6F5A9E82259B33600F56367 /* Main.FirstVC.swift in Sources */,
 				8E488A3E228D649E00001289 /* Log.swift in Sources */,
 				A6F5A9F2225B643D00F56367 /* Sequence+Extension.swift in Sources */,
 				A608BBEC22719AFF001BE2D4 /* MainFirstProfileBottomView.swift in Sources */,
 				8E488A3C228D641D00001289 /* Protocols.swift in Sources */,
 				A6F5A9F8225B66EB00F56367 /* Main.Model.swift in Sources */,
+				A6B4E451231B7AAF0089B5F9 /* TestCode.swift in Sources */,
+				A69D8E0B22F2DE2300A849A7 /* ExceptionCatcher.h in Sources */,
 				8EB01EFD227A85CC0036A0AB /* GlobalFunction.swift in Sources */,
 				A6F5A9F0225B640900F56367 /* UINib+Extension.swift in Sources */,
 				A6582CC322D4DED5005FBBC4 /* Looper.swift in Sources */,
@@ -446,12 +498,15 @@
 				A6F5A9F6225B66D000F56367 /* Main.Resolver.swift in Sources */,
 				A6F5A9EE225B61AC00F56367 /* UIButton+Extension.swift in Sources */,
 				8EB01EF7227A83EE0036A0AB /* Remote.swift in Sources */,
+				A6B4E44E231B78210089B5F9 /* TestInformationVC.swift in Sources */,
 				8EB01EF9227A843F0036A0AB /* DisposeBag.swift in Sources */,
 				A6582CD522D6FCDD005FBBC4 /* Funcs.swift in Sources */,
+				A63361D2231908A700715173 /* ComposerVC.swift in Sources */,
 				8EB01EFB227A85620036A0AB /* UIAlertController+Extension.swift in Sources */,
 				A608BBE62271982E001BE2D4 /* MainFirstProfileTitleView.swift in Sources */,
 				8EB01EFF227A86110036A0AB /* After.swift in Sources */,
 				A6F5A9E22259B18800F56367 /* Throttle.swift in Sources */,
+				A6B4E44C231B77F60089B5F9 /* TestNaviVC.swift in Sources */,
 				A6F5A9E02259AE7000F56367 /* Renderable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -537,7 +592,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -592,7 +647,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -607,6 +662,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5M2GQ2DR6P;
 				INFOPLIST_FILE = iOS_SandBox/Info.plist;
@@ -616,6 +672,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "BSide-Yoru-Study.iOS-SandBox";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "iOS_SandBox/Framework/iOS_SandBox-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -626,6 +684,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5M2GQ2DR6P;
 				INFOPLIST_FILE = iOS_SandBox/Info.plist;
@@ -635,6 +694,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "BSide-Yoru-Study.iOS-SandBox";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "iOS_SandBox/Framework/iOS_SandBox-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

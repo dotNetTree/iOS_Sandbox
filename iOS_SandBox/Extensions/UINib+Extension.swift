@@ -17,8 +17,12 @@ extension UINib {
     /// - Returns: nib에 설정된 view
     static func view<T>(nibName: String) -> T? {
         guard !nibName.contains("<") else { return nil }
-        return UINib.init(nibName: nibName, bundle: nil)
-            .instantiate(withOwner: nil, options: nil).find { $0 is T } as? T
+        var ret: T? = nil
+        let _ = tryBlock {
+            ret = UINib.init(nibName: nibName, bundle: nil)
+                .instantiate(withOwner: nil, options: nil).find { $0 is T } as? T
+        }
+        return ret
     }
 
     /// nib 파일로 부터 UIView를 얻는다.

@@ -9,20 +9,29 @@
 import Foundation
 import UIKit
 
+struct Title: Equatable {
+    let val: String
+}
+struct Name: Equatable {
+    let val: String
+}
 
-struct MainFirstProfileTitleVM: Equatable {
-    let title: String
+struct Compose: Equatable {
+    let title: Title
+    let name: Name
 }
 
 class MainFirstProfileTitleView: UIView {
     @IBOutlet weak var lbTitle: UILabel!
+    @IBOutlet weak var lbTitle2: UILabel!
+    @IBOutlet weak var btnTest: UIButton!
 }
 
 class Renderer<View, Model>: Renderable where View: UIView, Model: Equatable {
     var current: Model?
     var pending: Model?
     let view: View
-    init(ofType: View.Type) {
+    init() {
         self.view = UINib.view() ?? View.init()
     }
     func set(with model: Model?) {
@@ -46,13 +55,13 @@ class Renderer<View, Model>: Renderable where View: UIView, Model: Equatable {
 }
 
 extension Renderable
-    where Self: Renderer<MainFirstProfileTitleView, ViewState<MainFirstProfileTitleVM>> {
+    where Self: Renderer<MainFirstProfileTitleView, ViewState<Title>> {
     func _render() {
         guard let pending = pending else { return }
         switch pending {
         case .show(let vm):
             view.isHidden = false
-            view.lbTitle.text = vm.title
+            view.lbTitle.text = vm.val
         default:
             view.isHidden = true
         }
