@@ -91,7 +91,7 @@ class TestRendererVC: UIViewController, VCInitializer {
                 count += 1
                 if count % 40 == 0 {
 
-                    UIView.animate(withDuration: 0.3) {
+                    UIView.animate(withDuration: 15 * t / 1000) {
                         item0_1.style.width.value  = Double.random(in: 0...200) + 30
                         item0_1.style.height.value = Double.random(in: 0...200) + 30
                         item0_1.style.backgroundColor.value = { () -> String in
