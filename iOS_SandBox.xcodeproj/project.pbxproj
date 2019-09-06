@@ -38,6 +38,7 @@
 		A6B4E453231B7FAA0089B5F9 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B4E452231B7FAA0089B5F9 /* Renderer.swift */; };
 		A6B4E455231C0A8A0089B5F9 /* TestRendererVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B4E454231C0A8A0089B5F9 /* TestRendererVC.swift */; };
 		A6B4E457231C0AC90089B5F9 /* TestRendererVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = A6B4E456231C0AC90089B5F9 /* TestRendererVC.xib */; };
+		A6DE2C11231EC23A0082A987 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DE2C10231EC23A0082A987 /* UIColor+Extension.swift */; };
 		A6F5A9CB2259AC3E00F56367 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */; };
 		A6F5A9D02259AC3E00F56367 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9CE2259AC3E00F56367 /* Main.storyboard */; };
 		A6F5A9D22259AC3F00F56367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6F5A9D12259AC3F00F56367 /* Assets.xcassets */; };
@@ -160,6 +161,7 @@
 		A6B4E452231B7FAA0089B5F9 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		A6B4E454231C0A8A0089B5F9 /* TestRendererVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRendererVC.swift; sourceTree = "<group>"; };
 		A6B4E456231C0AC90089B5F9 /* TestRendererVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestRendererVC.xib; sourceTree = "<group>"; };
+		A6DE2C10231EC23A0082A987 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		A6F5A9C72259AC3E00F56367 /* iOS_SandBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS_SandBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6F5A9CA2259AC3E00F56367 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A6F5A9CF2259AC3E00F56367 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -343,6 +345,7 @@
 				A6F5A9ED225B61AC00F56367 /* UIButton+Extension.swift */,
 				A6F5A9EF225B640900F56367 /* UINib+Extension.swift */,
 				8E488A32228D60F200001289 /* Dictionary+Extension.swift */,
+				A6DE2C10231EC23A0082A987 /* UIColor+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -510,6 +513,7 @@
 				A6F5A9EE225B61AC00F56367 /* UIButton+Extension.swift in Sources */,
 				8EB01EF7227A83EE0036A0AB /* Remote.swift in Sources */,
 				A6B4E44E231B78210089B5F9 /* TestInformationVC.swift in Sources */,
+				A6DE2C11231EC23A0082A987 /* UIColor+Extension.swift in Sources */,
 				8EB01EF9227A843F0036A0AB /* DisposeBag.swift in Sources */,
 				A6582CD522D6FCDD005FBBC4 /* Funcs.swift in Sources */,
 				A63361D2231908A700715173 /* ComposerVC.swift in Sources */,

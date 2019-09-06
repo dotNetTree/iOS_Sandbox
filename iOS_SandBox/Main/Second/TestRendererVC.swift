@@ -42,6 +42,7 @@ class TestRendererVC: UIViewController, VCInitializer {
         ) {
             $0.style.width.value  = 200
             $0.style.height.value = 200
+            $0.style.backgroundColor.value = "#ffff00"
         }
         root.addItem(item: item0)
         let item1 = also(
@@ -60,20 +61,26 @@ class TestRendererVC: UIViewController, VCInitializer {
 
         looper.invoke { (dsl) in
             var count = 0
+            let t: Double = 30
             dsl.isInfinity = true
             dsl.block = { item in
                 count += 1
-                if count % 40 == 0 {
-
-                    UIView.animate(withDuration: 0.3) {
+                if count % Int(t) == 0 {
+                    UIView.animate(withDuration: 15 * t / 1000) {
                         item0.style.width.value  = Double.random(in: 0...200) + 100
                         item0.style.height.value = Double.random(in: 0...200) + 100
+                        item0.style.backgroundColor.value = { () -> String in
+                            let r = String(Int.random(in: 0...155) + 100, radix: 16)
+                            let g = String(Int.random(in: 0...155) + 100, radix: 16)
+                            let b = String(Int.random(in: 0...155) + 100, radix: 16)
+                            return "#\(r)\(g)\(b)"
+                        }()
                         item1.style.width.value  = Double.random(in: 0...200) + 100
                         item1.style.height.value = Double.random(in: 0...200) + 100
                         item0.reflow()
                     }
                     self.containerH.constant = CGFloat(root.offset.h)
-                    UIView.animate(withDuration: 0.3) {
+                    UIView.animate(withDuration: 15 * t / 1000) {
                         self.parent?.view.layoutIfNeeded()
                     }
                     count = 0

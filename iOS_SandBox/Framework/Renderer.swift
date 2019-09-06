@@ -68,6 +68,9 @@ class ViewRenderer: Renderer.Renderer<UIView> {
         let w = item.offset.w
         let h = item.offset.h
         view.frame = CGRect(x: x, y: y, width: w, height: h)
+        if let hex = item.style.backgroundColor.value as? String {
+            view.backgroundColor = UIColor(hexString: hex)
+        }
         children.forEach { $0.render() }
     }
 }
@@ -155,12 +158,14 @@ enum Renderer {
         private(set) var y: Length<Double>!
         private(set) var width: Length<Double>!
         private(set) var height: Length<Double>!
+        private(set) var backgroundColor: Color!
         var placer: Placer = NoPlacer
         init() {
             x = Length<Double>(v: 0, style: self)
             y = Length<Double>(v: 0, style: self)
             width  = Length<Double>(v: 0, style: self)
             height = Length<Double>(v: 0, style: self)
+            backgroundColor = Color.init(v: nil, style: self)
         }
         func setSize<T>(_ rect: Rect, _ style: Style, _ children: [Item<T>]) -> Rect {
             let w = try! style.width.get(rect.w)
@@ -173,33 +178,22 @@ enum Renderer {
         }
     }
 
-    class Length<T> {
-        private let style: Style?
-        var _value: Union? {
-            didSet { style?.isUpdated = true }
-        }
-        init(v: T, style: Style?) {
-            self.style = style
+    class Color: Unit<String> {
+        init(v: String?, style: Style?) {
+            super.init(style: style)
             self.value = v
         }
-        var value: Any? {
-            set {
-                switch newValue {
-                case let v as String: _value = Union.string(v)
-                case let v as Int:    _value = Union.double(Double(v))
-                case let v as Double: _value = Union.double(v)
-                default: break
-                }
-            }
-            get {
-                switch _value {
-                case .string(let v)?: return v
-                case .double(let v)?: return v
-                default:              return nil
-                }
-            }
+        override func get(_ _container: String) throws -> Double {
+            return 0
         }
-        func get(_ _container: T) throws -> Double {
+    }
+
+    class Length<T>: Unit<T> {
+        init(v: T, style: Style?) {
+            super.init(style: style)
+            self.value = v
+        }
+        override func get(_ _container: T) throws -> Double {
             guard let container = _container as? Double else {
                 throw NSError(
                     domain: "invalid type",
@@ -217,13 +211,43 @@ enum Renderer {
                 return v
             default: return 0
             }
-
         }
     }
 
-    enum Union { // Union
-        case string(String)
-        case double(Double)
+    class Unit<T> {
+        enum Union { // Union
+            case string(String)
+            case double(Double)
+        }
+        var style: Style?
+        private var _value: Union? { didSet { style?.isUpdated = true } }
+        var value: Any? {
+            set {
+                switch newValue {
+                case let v as String: _value = Union.string(v)
+                case let v as Int:    _value = Union.double(Double(v))
+                case let v as Double: _value = Union.double(v)
+                default: break
+                }
+            }
+            get {
+                switch _value {
+                case .string(let v)?: return v
+                case .double(let v)?: return v
+                default:              return nil
+                }
+            }
+        }
+        init(style: Style?) {
+            self.style = style
+        }
+        func get(_ _container: T) throws -> Double {
+            throw NSError(
+                domain: "NotImplementedException",
+                code: -1,
+                userInfo: ["msg": "not implemented `get()` function"]
+            )
+        }
     }
 
     class Item<T> {
@@ -267,5 +291,15 @@ enum Renderer {
             style.isUpdated = true
             reflow()
         }
+//        removeItem(item:Item<T>){
+//        const children = this.children, i = children.indexOf(item);
+//        if(i != -1){
+//        children.splice(i, 1);
+//        item.container = item;
+//        this.renderer.removeItem(item.renderer);
+//        this.style.isUpdated = true;
+//        this.reflow();
+//        }
+//        }
     }
 }

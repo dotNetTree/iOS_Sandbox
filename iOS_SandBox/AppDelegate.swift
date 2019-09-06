@@ -47,6 +47,16 @@ extension String {
     }
 }
 
+class WeakTest {
+    let action: VoidClosure
+    init(closure: @escaping VoidClosure) {
+        action = closure
+    }
+    deinit {
+        print("Weak Test Deinit")
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
