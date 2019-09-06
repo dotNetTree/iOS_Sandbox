@@ -14,8 +14,29 @@ class _NoPlacer: Renderer.Placer {
         return Renderer.Rect.new(["w": w, "h": h])
     }
 }
-let NoPlacer = _NoPlacer()
+class _BlockPlacer: Renderer.Placer {
 
+    override func setPosition<T>(_ w: Double, _ h: Double, _ children: [Renderer.Item<T>]) -> Renderer.Rect {
+
+        var x: Double = 0
+        var y: Double = 0
+        var lineHeight: Double = 0
+        var prevWidth:  Double = 0
+        children.forEach { (child) in
+            child.reflow()
+            let cw = child.offset.w
+            let ch = child.offset.h
+            y += lineHeight
+            lineHeight = ch
+            child.offset = child.offset.new([ "x": 0, "y": y, "w": w ])
+        }
+        return Renderer.Rect.new([
+            "w": w, //w < 0 ? x + prevWidth : w,
+            "h": h < 0 ? y + lineHeight : h
+        ])
+    }
+
+}
 class _InlinePlacer: Renderer.Placer {
     override func setPosition<T>(_ w: Double, _ h: Double, _ children: [Renderer.Item<T>]) -> Renderer.Rect {
 
@@ -45,7 +66,10 @@ class _InlinePlacer: Renderer.Placer {
     }
 }
 
+let NoPlacer = _NoPlacer()
+let BlockPlacer = _BlockPlacer()
 let InlinePlacer = _InlinePlacer()
+
 
 class ViewRenderer: Renderer.Renderer<UIView> {
     override init(target: UIView) {
@@ -207,6 +231,8 @@ enum Renderer {
                 return -1
             case let v as String where String(v.suffix(1)) == "%":
                 return container * (Double(String(v.dropLast())) ?? 0) / 100
+            case let v as String where v == "match_parent":
+                return container
             case let v as Double:
                 return v
             default: return 0

@@ -28,7 +28,7 @@ class TestRendererVC: UIViewController, VCInitializer {
                 })
             )
         ) { item in
-            item.style.placer = InlinePlacer
+            item.style.placer = BlockPlacer
             item.style.width.value  = "auto"
             item.style.height.value = "auto"
             Watcher.who(self.view)
@@ -46,7 +46,7 @@ class TestRendererVC: UIViewController, VCInitializer {
             )
         ) {
             $0.style.placer = InlinePlacer
-            $0.style.width.value  = "auto"
+            $0.style.width.value  = "match_parent"
             $0.style.height.value = "auto"
         }
         let item0_1 = also(
@@ -90,23 +90,27 @@ class TestRendererVC: UIViewController, VCInitializer {
 
         looper.invoke { [weak self] (dsl) in
             var count = 0
+            var toggle = false
             let t: Double = 30
             dsl.isInfinity = true
             dsl.block = { item in
                 guard self != nil else { item.isStop = true; return }
                 count += 1
                 if count % 40 == 0 {
+                    toggle.toggle()
+                    root.style.placer = toggle ? InlinePlacer : BlockPlacer
+                    item0.style.width.value = Int.random(in: 0...1) == 1 ? "match_parent" : "auto"
                     UIView.animate(withDuration: 15 * t / 1000) {
-                        item0_1.style.width.value  = Double.random(in: 0...200) + 30
-                        item0_1.style.height.value = Double.random(in: 0...200) + 30
+                        item0_1.style.width.value  = Double.random(in: 0...300) + 30
+                        item0_1.style.height.value = Double.random(in: 0...300) + 30
                         item0_1.style.backgroundColor.value = { () -> String in
                             let r = String(Int.random(in: 0...155) + 100, radix: 16)
                             let g = String(Int.random(in: 0...155) + 100, radix: 16)
                             let b = String(Int.random(in: 0...155) + 100, radix: 16)
                             return "#\(r)\(g)\(b)"
                         }()
-                        item0_2.style.width.value  = Double.random(in: 0...200) + 30
-                        item0_2.style.height.value = Double.random(in: 0...200) + 30
+                        item0_2.style.width.value  = Double.random(in: 0...300) + 30
+                        item0_2.style.height.value = Double.random(in: 0...300) + 30
                         item0_2.style.backgroundColor.value = { () -> String in
                             let r = String(Int.random(in: 0...155) + 100, radix: 16)
                             let g = String(Int.random(in: 0...155) + 100, radix: 16)
