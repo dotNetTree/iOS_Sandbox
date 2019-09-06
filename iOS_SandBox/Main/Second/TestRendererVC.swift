@@ -27,10 +27,15 @@ class TestRendererVC: UIViewController, VCInitializer {
                     $0.backgroundColor = UIColor(red: 221/255, green: 221/255, blue: 221/255, alpha: 1.0)
                 })
             )
-        ) {
-            $0.style.placer = InlinePlacer
-            $0.style.width.value  = 320
-            $0.style.height.value = "auto"
+        ) { item in
+            item.style.placer = InlinePlacer
+            item.style.width.value  = "auto"
+            item.style.height.value = "auto"
+            Watcher.who(self.view)
+                .watch(\.bounds) { [weak item] (_, vals) in
+                    item?.style.width?.value = Double(vals.1.size.width)
+                    item?.reflow()
+                }
         }
 
         let item0 = also(
@@ -83,14 +88,14 @@ class TestRendererVC: UIViewController, VCInitializer {
         container.addSubview(root.target())
         root.reflow()
 
-        looper.invoke { (dsl) in
+        looper.invoke { [weak self] (dsl) in
             var count = 0
             let t: Double = 30
             dsl.isInfinity = true
             dsl.block = { item in
+                guard self != nil else { item.isStop = true; return }
                 count += 1
                 if count % 40 == 0 {
-
                     UIView.animate(withDuration: 15 * t / 1000) {
                         item0_1.style.width.value  = Double.random(in: 0...200) + 30
                         item0_1.style.height.value = Double.random(in: 0...200) + 30
@@ -112,9 +117,9 @@ class TestRendererVC: UIViewController, VCInitializer {
                         item1.style.height.value = Double.random(in: 0...200) + 50
                         item0_1.reflow()
                     }
-                    self.containerH.constant = CGFloat(root.offset.h)
+                    self?.containerH.constant = CGFloat(root.offset.h)
                     UIView.animate(withDuration: 15 * t / 1000) {
-                        self.parent?.view.layoutIfNeeded()
+                        self?.parent?.view.layoutIfNeeded()
                     }
                     count = 0
                 }

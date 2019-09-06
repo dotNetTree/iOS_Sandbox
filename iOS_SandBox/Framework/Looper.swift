@@ -278,6 +278,64 @@ extension Looper.Item {
 
 }
 
+class Watcher {
+    class Sequence<Who> where Who: AnyObject {
+        weak var who: Who?
+        private var _prev: Sequence<Who>?
+        private var _invalidate: VoidClosure?
+        init(who: Who?) { self.who = who }
+        @discardableResult
+        func watch<V>(
+            _ keyPath: KeyPath<Who, V>,
+            predicate: @escaping (V, V) -> Bool = { $0 != $1 },
+            changeHandler: @escaping (Who, (V, V)) -> Void
+            ) -> Sequence<Who> where Who: AnyObject, V: Equatable {
+            _invalidate = Watcher.watch(who: who, keyPath, changeHandler: changeHandler)
+            return also(Sequence(who: who)) { [weak self] in $0._prev = self }
+        }
+        func invalidate() {
+            _invalidate?()
+        }
+        func invalidateAll() {
+            invalidate()
+            _prev?.invalidateAll()
+        }
+    }
+    static func who<Who>(_ who: Who?) -> Sequence<Who> where Who: AnyObject {
+        return Sequence(who: who)
+    }
+    @discardableResult
+    private static func watch<Who, V>(
+        who: Who?,
+        _ keyPath: KeyPath<Who, V>,
+        predicate: @escaping (V, V) -> Bool = { $0 != $1 },
+        changeHandler: @escaping (Who, (V, V)) -> Void
+        ) -> VoidClosure where Who: AnyObject, V: Equatable  {
+        var isFinish = false
+        looper.invoke { [weak who] (dsl) in
+            var oVal = who?[keyPath: keyPath]
+            dsl.isInfinity = true
+            dsl.block = { (item) in
+                guard !isFinish else { item.isStop = true; return }
+                switch who {
+                case .none: item.isStop = true
+                case .some(let who):
+                    let nVal = who[keyPath: keyPath]
+                    if let _oVal = oVal, predicate(_oVal, nVal) {
+                        changeHandler(who, (_oVal, nVal))
+                        oVal = nVal
+                    }
+                }
+            }
+            dsl.ended = { _ in
+                print("watch finished")
+            }
+        }
+        return { isFinish = true }
+    }
+}
+
+
 class Completion {
     static let EMPTY = Completion(action: { })
     var action: VoidClosure
