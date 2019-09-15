@@ -14,15 +14,15 @@ class TestNaviVC: UIViewController {
         super.viewDidLoad()
         print("TestNaviVC")
 
-        looper.invoke { [weak self] (dsl) in
-            guard let self = self else { return }
-            dsl.block = { [weak self] item in
-                guard let self = self else { item.isStop = true; return }
-                guard let parentView = self.parent?.view else { return }
-                showParticle(target: parentView)
-                item.isStop = true
-            }
-        }
+//        looper.invoke { [weak self] (dsl) in
+//            guard let self = self else { return }
+//            dsl.block = { [weak self] item in
+//                guard let self = self else { item.isStop = true; return }
+//                guard let parentView = self.parent?.view else { return }
+//                showParticle(target: parentView)
+//                item.isStop = true
+//            }
+//        }
     }
 }
 

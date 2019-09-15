@@ -310,22 +310,26 @@ enum Renderer {
                 print(error)
             }
         }
-        func addItem(item: Item<T>) {
+        func add(item: Item<T>) {
             children.append(item)
             item.container = self
             try! renderer.addItem(item.renderer)
             style.isUpdated = true
             reflow()
         }
-//        removeItem(item:Item<T>){
-//        const children = this.children, i = children.indexOf(item);
-//        if(i != -1){
-//        children.splice(i, 1);
-//        item.container = item;
-//        this.renderer.removeItem(item.renderer);
-//        this.style.isUpdated = true;
-//        this.reflow();
-//        }
-//        }
+        func remove(item: Item<T>) {
+            guard let i = { () -> Int? in
+                var i: Int? = nil
+                for (offset, value) in children.enumerated() {
+                    if value === item { i = offset; break }
+                }
+                return i
+            }() else { return }
+            children.remove(at: i)
+            item.container = item   // root로 만든다.  retain cycle!!!
+            try? renderer.removeItem(item.renderer)
+            style.isUpdated = true
+            reflow()
+        }
     }
 }
