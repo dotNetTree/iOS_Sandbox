@@ -15,31 +15,24 @@ class _NoPlacer: Renderer.Placer {
     }
 }
 class _BlockPlacer: Renderer.Placer {
-
     override func setPosition<T>(_ w: Double, _ h: Double, _ children: [Renderer.Item<T>]) -> Renderer.Rect {
-
-        var x: Double = 0
         var y: Double = 0
         var lineHeight: Double = 0
-        var prevWidth:  Double = 0
         children.forEach { (child) in
             child.reflow()
-            let cw = child.offset.w
             let ch = child.offset.h
             y += lineHeight
             lineHeight = ch
             child.offset = child.offset.new([ "x": 0, "y": y, "w": w ])
         }
         return Renderer.Rect.new([
-            "w": w, //w < 0 ? x + prevWidth : w,
+            "w": w,
             "h": h < 0 ? y + lineHeight : h
         ])
     }
-
 }
 class _InlinePlacer: Renderer.Placer {
     override func setPosition<T>(_ w: Double, _ h: Double, _ children: [Renderer.Item<T>]) -> Renderer.Rect {
-
         var x: Double = 0
         var y: Double = 0
         var lineHeight: Double = 0
@@ -66,10 +59,54 @@ class _InlinePlacer: Renderer.Placer {
     }
 }
 
-let NoPlacer = _NoPlacer()
-let BlockPlacer = _BlockPlacer()
-let InlinePlacer = _InlinePlacer()
+class _GridPlacer: Renderer.Placer {
+    struct Padding {
+        let left: Double
+        let top: Double
+        let right: Double
+        let bottom: Double
+        init(l: Double = 0, t: Double = 0, r: Double = 0, b: Double = 0) {
+            left = l; top = t; right = r; bottom = b
+        }
+    }
+    var cols: Int
+    var spacing: (v: Double, h: Double)
+    var padding: Padding
+    init(cols: Int = 1, padding: Padding = Padding(), spacing: (v: Double, h: Double) = (0, 0)) {
+        self.cols = cols >= 1 ? cols : 1
+        self.spacing = spacing
+        self.padding = padding
+    }
+    override func setPosition<T>(_ w: Double, _ h: Double, _ children: [Renderer.Item<T>]) -> Renderer.Rect {
+        guard w != -1 else { return Renderer.Rect.new([ "w": w, "h": h ]) }
+        var x: Double = 0
+        var y: Double = padding.top
+        let w: Double = (w - padding.left - padding.right - (Double(cols) - 1) * spacing.h) / Double(cols)
+        var lineHeight: Double = 0
+        for (i, child) in (children.filter {
+            ($0.style.visibility.value as? String) != Renderer.Visibility.GONE
+        }.enumerated()) {
+            child.style.width.value = w
+            child.reflow()
+            let ch = child.offset.h
+            x = padding.left + (Double(i % cols)) * (w + spacing.h)
+            if  i >= cols, i % cols == 0 {
+                y += lineHeight + spacing.h
+                lineHeight = 0
+            }
+            lineHeight = lineHeight < ch ? ch : lineHeight
+            child.offset = child.offset.new([ "x": x, "y": y ])
+        }
+        return Renderer.Rect.new([
+            "w": w,
+            "h": h < 0 ? y + lineHeight + padding.bottom : h
+        ])
+    }
+}
 
+let NoPlacer     = _NoPlacer()
+let BlockPlacer  = _BlockPlacer()
+let InlinePlacer = _InlinePlacer()
 
 class ViewRenderer: Renderer.Renderer<UIView> {
     override init(target: UIView) {
@@ -94,6 +131,9 @@ class ViewRenderer: Renderer.Renderer<UIView> {
         view.frame = CGRect(x: x, y: y, width: w, height: h)
         if let hex = item.style.backgroundColor.value as? String {
             view.backgroundColor = UIColor(hexString: hex)
+        }
+        if let display = item.style.visibility.value as? String {
+            view.isHidden = display != Renderer.Visibility.VISIBLE
         }
         children.forEach { $0.render() }
     }
@@ -183,6 +223,7 @@ enum Renderer {
         private(set) var width: Length<Double>!
         private(set) var height: Length<Double>!
         private(set) var backgroundColor: Color!
+        private(set) var visibility: Visibility!
         var placer: Placer = NoPlacer
         init() {
             x = Length<Double>(v: 0, style: self)
@@ -190,6 +231,7 @@ enum Renderer {
             width  = Length<Double>(v: 0, style: self)
             height = Length<Double>(v: 0, style: self)
             backgroundColor = Color.init(v: nil, style: self)
+            visibility = Visibility.init(v: Visibility.VISIBLE, style: self)
         }
         func setSize<T>(_ rect: Rect, _ style: Style, _ children: [Item<T>]) -> Rect {
             let w = try! style.width.get(rect.w)
@@ -199,6 +241,19 @@ enum Renderer {
             case _ where children.count == 0: return Rect.new(["w": w < 0 ? 0 : w, "h": h < 0 ? 0 : h])
             default: return placer.setPosition(w, h, children);
             }
+        }
+    }
+
+    class Visibility: Unit<String> {
+        static let VISIBLE: String   = "visible"
+        static let INVISIBLE: String = "invisible"
+        static let GONE: String      = "gone"
+        init(v: String?, style: Style?) {
+            super.init(style: style)
+            self.value = v
+        }
+        override func get(_ _container: String) throws -> Double {
+            return 0
         }
     }
 
@@ -241,7 +296,7 @@ enum Renderer {
     }
 
     class Unit<T> {
-        enum Union { // Union
+        enum Union: Equatable { // Union
             case string(String)
             case double(Double)
         }
@@ -249,12 +304,14 @@ enum Renderer {
         private var _value: Union? { didSet { style?.isUpdated = true } }
         var value: Any? {
             set {
+                let val: Union?
                 switch newValue {
-                case let v as String: _value = Union.string(v)
-                case let v as Int:    _value = Union.double(Double(v))
-                case let v as Double: _value = Union.double(v)
-                default: break
+                case let v as String: val = Union.string(v)
+                case let v as Int:    val = Union.double(Double(v))
+                case let v as Double: val = Union.double(v)
+                default: val = nil
                 }
+                if val != _value { _value = val }
             }
             get {
                 switch _value {

@@ -45,12 +45,25 @@ class TestRendererVC: UIViewController, VCInitializer {
                 })
             )
         ) {
-            $0.style.placer = InlinePlacer
+            let placer = _GridPlacer.init(
+                cols: 3, spacing: (v: 10, h: 20)
+            )
+            placer.padding = _GridPlacer.Padding(l: 20, t: 20, r: 20, b: 20)
+            $0.style.placer = placer
             $0.style.width.value  = "match_parent"
             $0.style.height.value = "auto"
+            after(delay: 5, closure: {
+                placer.cols = 1
+//                placer.padding = _GridPlacer.Padding(l: 20, t: 20, r: 20, b: 20)
+                after(delay: 5, closure: {
+                    placer.cols = 2
+                    placer.padding = _GridPlacer.Padding()
+                })
+            })
         }
         let xibView1: TestXibView = UINib.view()!
         let xibView2: TestXibView = UINib.view()!
+        let xibView3: TestXibView = UINib.view()!
         let item0_1 = also(
             Renderer.Item(
                 renderer: ViewRenderer(target: also(xibView1) {
@@ -58,8 +71,8 @@ class TestRendererVC: UIViewController, VCInitializer {
                 })
             )
         ) {
-            $0.style.width.value  = "50%"
-            $0.style.height.value = "auto"
+//            $0.style.width.value  = "auto"
+//            $0.style.height.value = "auto"
             $0.style.backgroundColor.value = "#ffff00"
         }
         let item0_2 = also(
@@ -69,8 +82,19 @@ class TestRendererVC: UIViewController, VCInitializer {
                 })
             )
         ) {
-            $0.style.width.value  = "50%"
-            $0.style.height.value = "auto"
+            _ = $0.style.width.value
+//            $0.style.height.value = "auto"
+        }
+
+        let item0_3 = also(
+            Renderer.Item(
+                renderer: ViewRenderer(target: also(xibView3) {
+                    $0.backgroundColor = UIColor(red: 0.3, green: 0.7, blue: 0.2, alpha: 1.0)
+                })
+            )
+        ) {
+            _ = $0.style.width.value
+            //            $0.style.height.value = "auto"
         }
 
         //                    self?.containerH.constant = CGFloat(root.offset.h)
@@ -104,8 +128,21 @@ class TestRendererVC: UIViewController, VCInitializer {
                 self.parent?.view.layoutIfNeeded()
             }
         }
+
+        Watcher.who(item0_3.target().subviews.first).watch(\.frame) { (_, vals) in
+            UIView.animate(withDuration: 0.25) {
+                item0_3.style.height.value = Double(vals.1.size.height)
+                item0_3.reflow()
+            }
+            self.containerH.constant = CGFloat(root.offset.h)
+            UIView.animate(withDuration: 0.25) {
+                self.parent?.view.layoutIfNeeded()
+            }
+        }
+
         item0.add(item: item0_1)
         item0.add(item: item0_2)
+        item0.add(item: item0_3)
         item0.reflow()
 //        let item1 = also(
 //            Renderer.Item(
@@ -141,10 +178,18 @@ class TestRendererVC: UIViewController, VCInitializer {
                         } while (idx1 == ret)
                         return ret
                     }()
+
+//                    if let visibility = item0_2.style.visibility.value as? String {
+//                        item0_2.style.visibility.value = visibility == Renderer.Visibility.VISIBLE
+//                                                        ? Renderer.Visibility.GONE
+//                                                        : Renderer.Visibility.VISIBLE
+//                    }
                     xibView1.title.text = data[idx1]["title"]
                     xibView1.desc.text  = data[idx1]["desc"]
                     xibView2.title.text = data[idx2]["title"]
                     xibView2.desc.text  = data[idx2]["desc"]
+                    xibView3.title.text = data[idx1]["title"]
+                    xibView3.desc.text  = data[idx1]["desc"]
 //                    item0_1.reflow()
 //                    UIView.animate(withDuration: 15 * t / 1000) {
 ////                        item0_1.style.width.value  = Double.random(in: 0...300) + 30
