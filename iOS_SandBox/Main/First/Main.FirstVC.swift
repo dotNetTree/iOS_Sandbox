@@ -95,9 +95,9 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
     func updated() {
         section1.set(with: MainPackage.MainSection().run(ec: model))
-        looper.once { [weak section1] _ in
-            section1?.render()
-        }.nextOnce { _ in
+        looper.invoke { [weak section1] dsl in
+            dsl.block = { _ in section1?.render() }
+        }.next { _ in
             print("마지막으로 한번 출력!!!")
             print("마지막으로 한번 출력!!!")
             print("마지막으로 한번 출력!!!")

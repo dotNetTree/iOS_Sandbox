@@ -21,7 +21,7 @@ enum Looper {
     private class Updater {
         private var displayLink: CADisplayLink?
         private var activated = false
-        var loopers = [Looper]()
+        fileprivate var loopers = [Looper]()
         func start() {
             if !activated {
                 displayLink = CADisplayLink(target: self, selector: #selector(update))
@@ -60,6 +60,11 @@ enum Looper {
         fileprivate var marked = false
     }
 
+    class Pause {
+        static let `default` = Pause()
+        var active: Bool = false
+    }
+    
     class Looper {
         class ItemDSL {
             var time:  Double = -1
@@ -69,6 +74,7 @@ enum Looper {
             var ended: Item.Block = Item.emptyBlock
             var isInfinity: Bool  = false
         }
+
         private let concurrentQueue = DispatchQueue(
             label: "com.chela.lopper.lopper.queue",
             attributes: .concurrent
@@ -108,47 +114,47 @@ enum Looper {
             hasRemoveItems = false
             add.removeAll()
 
-            concurrentQueue.sync {
-                var i = 0
-                while i < items.count {
-                    let item = items[i]
-                    i += 1
-                    if item.isPaused || item.start > c {
-                        continue
-                    }
-                    item.isTurn = false
-                    var isEnd = false
-                    item.rate = {
-                        if item.end <= c {
-                            item.loop -= 1
-                            if item.loop == 0 {
-                                isEnd = true
-                                return 1.0
-                            } else {
-                                item.isTurn = true
-                                item.start = c
-                                item.end = c + item.term
-                                return 0.0
-                            }
-                        } else if item.term == 0.0 {
-                            return 0.0
+            var _items: [Item]?
+            concurrentQueue.sync { _items = items }
+            var i = 0
+            while i < _items!.count {
+                let item = _items![i]
+                i += 1
+                if item.isPaused || item.start > c {
+                    continue
+                }
+                item.isTurn = false
+                var isEnd = false
+                item.rate = {
+                    if item.end <= c {
+                        item.loop -= 1
+                        if item.loop == 0 {
+                            isEnd = true
+                            return 1.0
                         } else {
-                            return (c - item.start) / item.term
+                            item.isTurn = true
+                            item.start = c
+                            item.end = c + item.term
+                            return 0.0
                         }
-                    }()
-                    item.current = c
-                    item.isStop = false
-                    item.block(item)
-                    if item.isStop || isEnd {
-                        item.ended(item)
-                        if let n = item.next {
-                            n.start += c
-                            n.end = n.start + n.term
-                            add.append(n)
-                        }
-                        hasRemoveItems = true
-                        item.marked = true
+                    } else if item.term == 0.0 {
+                        return 0.0
+                    } else {
+                        return (c - item.start) / item.term
                     }
+                }()
+                item.current = c
+                item.isStop = false
+                item.block(item)
+                if item.isStop || isEnd {
+                    item.ended(item)
+                    if let n = item.next {
+                        n.start += c
+                        n.end = n.start + n.term
+                        add.append(n)
+                    }
+                    hasRemoveItems = true
+                    item.marked = true
                 }
             }
 
@@ -169,27 +175,33 @@ enum Looper {
                     if !self.add.isEmpty {
                         self.items = self.items + self.add
                     }
-                    print("itemPool count := \(self.itemPool.count)")
+                    print("working items := \(self.items.count) | in pool := \(self.itemPool.count)")
                 }
             }
         }
 
-        func getItem(_ i: ItemDSL) -> Item {
+        fileprivate func getItem(_ i: ItemDSL, pause: Pause? = Pause.default) -> Item {
             return also(itemPool.count == 0 ? Item() : itemPool.removeLast()) {
                 $0.term  = i.time
                 $0.start = i.delay
                 $0.loop  = i.isInfinity ? -1 : i.loop
-                $0.block = i.block
                 $0.ended = i.ended
                 $0.next  = nil
-                $0.isStop = false
-                $0.marked = false
+                $0.isPaused = false
+                $0.isTurn   = false
+                $0.isStop   = false
+                $0.marked   = false
+                let block = i.block
+                $0.block = { [weak pause] item in
+                    if let pause = pause { item.isPaused = pause.active }
+                    block(item)
+                }
             }
         }
 
         @discardableResult
-        func invoke(_ block: (ItemDSL) -> Void) -> Sequence {
-            let item = getItem(also(ItemDSL()) { block($0) })
+        func invoke(pause: Pause? = Pause.default, _ block: (ItemDSL) -> Void) -> Sequence {
+            let item = getItem(also(ItemDSL()) { block($0) }, pause: pause)
             item.start += now()
             item.end = item.term == -1.0 ? -1.0 : item.start + item.term
             concurrentQueue.async(flags: .barrier) { [weak self] in
@@ -197,11 +209,6 @@ enum Looper {
             }
             sequence.current = item
             return sequence
-        }
-
-        @discardableResult
-        func once(_ block: @escaping (Item) -> Void) -> Sequence {
-            return invoke { $0.block = { block($0); $0.isStop = true } }
         }
 
         func pause(){
@@ -223,17 +230,8 @@ enum Looper {
             self.looper = looper
         }
         @discardableResult
-        func next(block: (Looper.ItemDSL) -> Void) -> Sequence {
-            let item = looper.getItem(also(Looper.ItemDSL()) { block($0) })
-            current?.next = item
-            current = item
-            return self
-        }
-        @discardableResult
-        func nextOnce(_ block: @escaping (Item) -> Void) -> Sequence {
-            let item = looper.getItem(also(Looper.ItemDSL()) {
-                $0.block = { block($0); $0.isStop = true }
-            })
+        func next(pause: Pause? = Pause.default, block: (Looper.ItemDSL) -> Void) -> Sequence {
+            let item = looper.getItem(also(Looper.ItemDSL()) { block($0) }, pause: pause)
             current?.next = item
             current = item
             return self
@@ -278,20 +276,147 @@ extension Looper.Item {
 
 }
 
+protocol WeakContextHasable {
+    var context: AnyObject? { get }
+}
+class WeakContextContainer {
+    static let shared = WeakContextContainer()
+    private static let period: Double = 2.0 // 2초 주기
+    private var targets = [WeakContextHasable]()
+    init() {
+        looper.invoke { (dsl) in
+            dsl.isInfinity = true
+            dsl.block = { item in
+                item.start += WeakContextContainer.period
+                for i in (0..<self.targets.count).reversed() {
+                    if self.targets[i].context == nil {
+                        self.targets.remove(at: i)
+                    }
+                }
+//                print("live context counts := \(self.targets.count)")
+            }
+        }
+    }
+    func add(_ weakObj: WeakContextHasable) {
+        targets.append(weakObj)
+    }
+}
+
+class Funnel: WeakContextHasable {
+
+    typealias Fulfill = (Completion) -> Void
+    
+    class Completion {
+        static let EMPTY = Completion(action: { })
+        var action: VoidClosure
+        init(action: @escaping VoidClosure) {
+            self.action = action
+        }
+    }
+    fileprivate class Block {
+        static let TypeNext = "next"
+        static let TypePhase = "phase"
+        let type: String
+        let body1: ((@escaping Fulfill) -> Void)?
+        let body2: (() -> Funnel)?
+        init(type: String, body1: ((@escaping Fulfill) -> Void)? = nil, body2: (() -> Funnel)? = nil) {
+            self.type = type
+            self.body1 = body1
+            self.body2 = body2
+        }
+    }
+    fileprivate var blocks = [Block]()
+    internal weak var context: AnyObject?
+    private var seq: Looper.Sequence!
+    private var sub: Funnel? = nil
+    init(context: AnyObject? = nil) {
+        self.context = context
+        WeakContextContainer.shared.add(self)
+    }
+    @discardableResult
+    func next(body: @escaping (@escaping Fulfill) -> Void) -> Funnel {
+        blocks.append(Funnel.Block(type: Block.TypeNext, body1: body))
+        return self
+    }
+    @discardableResult
+    func phase(body: @escaping () -> Funnel) -> Funnel {
+        blocks.append(Funnel.Block(type: Block.TypePhase, body2: body))
+        return self
+    }
+
+    private var active = false
+    private func _start() {
+        while blocks.count > 0 {
+            let block = blocks.removeFirst()
+            if block.type == Block.TypeNext {
+                let body = block.body1!
+                if seq == nil {
+                    seq = looper.invoke(getDSLBlock(body))
+                } else {
+                    seq = seq.next(block: getDSLBlock(body))
+                }
+            } else {
+                let factory = block.body2!
+                sub = factory()
+                seq.current?.ended = { [weak self] item in
+                    guard let sub = self?.sub else { return }
+                    sub.start()
+                    var last: Funnel? = self
+                    while last?.sub != nil {
+                        last = last?.sub
+                    }
+                    last?.seq.current?.ended = { _ in
+                        self?._start()
+                    }
+                }
+                break
+            }
+        }
+    }
+    func start() {
+        guard !active else { return }
+        active = true
+        _start()
+    }
+
+    private func getDSLBlock(
+        _ body: @escaping (@escaping Fulfill) -> Void
+    ) -> (Looper.Looper.ItemDSL) -> Void {
+        return { dsl in
+            var completion = Completion.EMPTY
+            body({ completion = $0 })
+            dsl.isInfinity = true
+            dsl.block = { item in
+                if completion !== Completion.EMPTY {
+                    completion.action()
+                    item.isStop = true
+                }
+            }
+        }
+    }
+    deinit {
+        print("deinit Funnel")
+    }
+}
+
 class Watcher {
     class Sequence<Who> where Who: AnyObject {
         weak var who: Who?
         private var _prev: Sequence<Who>?
-        private var _invalidate: VoidClosure?
+        fileprivate var _invalidate: VoidClosure?
         init(who: Who?) { self.who = who }
         @discardableResult
         func watch<V>(
             _ keyPath: KeyPath<Who, V>,
+            initValue: V? = nil,
             predicate: @escaping (V, V) -> Bool = { $0 != $1 },
             changeHandler: @escaping (Who, (V, V)) -> Void
-            ) -> Sequence<Who> where Who: AnyObject, V: Equatable {
-            _invalidate = Watcher.watch(who: who, keyPath, changeHandler: changeHandler)
-            return also(Sequence(who: who)) { [weak self] in $0._prev = self }
+        ) -> Sequence<Who> where Who: AnyObject, V: Equatable {
+            _invalidate = Watcher.watch(who: who, keyPath, initValue: initValue, predicate: predicate, changeHandler: changeHandler)
+            return also(Sequence(who: who)) { [weak self] in
+                $0._prev = self
+                $0._invalidate = self?._invalidate
+            }
         }
         func invalidate() {
             _invalidate?()
@@ -308,12 +433,13 @@ class Watcher {
     private static func watch<Who, V>(
         who: Who?,
         _ keyPath: KeyPath<Who, V>,
+        initValue: V? = nil,
         predicate: @escaping (V, V) -> Bool = { $0 != $1 },
         changeHandler: @escaping (Who, (V, V)) -> Void
-        ) -> VoidClosure where Who: AnyObject, V: Equatable  {
+    ) -> VoidClosure where Who: AnyObject, V: Equatable  {
         var isFinish = false
         looper.invoke { [weak who] (dsl) in
-            var oVal = who?[keyPath: keyPath]
+            var oVal = initValue ?? who?[keyPath: keyPath]
             dsl.isInfinity = true
             dsl.block = { (item) in
                 guard !isFinish else { item.isStop = true; return }
@@ -328,18 +454,9 @@ class Watcher {
                 }
             }
             dsl.ended = { _ in
-                print("watch finished")
+//                print("watch finished")
             }
         }
         return { isFinish = true }
-    }
-}
-
-
-class Completion {
-    static let EMPTY = Completion(action: { })
-    var action: VoidClosure
-    init(action: @escaping VoidClosure) {
-        self.action = action
     }
 }

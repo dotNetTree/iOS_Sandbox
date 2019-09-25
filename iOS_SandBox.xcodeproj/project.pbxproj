@@ -31,8 +31,8 @@
 		A63361DD23190E5100715173 /* TestInformationVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = A63361DC23190E5100715173 /* TestInformationVC.xib */; };
 		A63361DF2319176F00715173 /* TestBNaviVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = A63361DE2319176F00715173 /* TestBNaviVC.xib */; };
 		A635C5F323019D370062FE48 /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A635C5F223019D370062FE48 /* Animator.swift */; };
-		A6582CC322D4DED5005FBBC4 /* Looper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6582CC222D4DED5005FBBC4 /* Looper.swift */; };
 		A6582CD522D6FCDD005FBBC4 /* Funcs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6582CD422D6FCDD005FBBC4 /* Funcs.swift */; };
+		A6721072233B512F00B5CEE2 /* Looper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6721071233B512F00B5CEE2 /* Looper.swift */; };
 		A69D8E0B22F2DE2300A849A7 /* ExceptionCatcher.h in Sources */ = {isa = PBXBuildFile; fileRef = A69D8E0A22F2DE2300A849A7 /* ExceptionCatcher.h */; };
 		A6B4E44C231B77F60089B5F9 /* TestNaviVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B4E44B231B77F60089B5F9 /* TestNaviVC.swift */; };
 		A6B4E44E231B78210089B5F9 /* TestInformationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B4E44D231B78210089B5F9 /* TestInformationVC.swift */; };
@@ -155,8 +155,8 @@
 		A63361DC23190E5100715173 /* TestInformationVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestInformationVC.xib; sourceTree = "<group>"; };
 		A63361DE2319176F00715173 /* TestBNaviVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TestBNaviVC.xib; sourceTree = "<group>"; };
 		A635C5F223019D370062FE48 /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
-		A6582CC222D4DED5005FBBC4 /* Looper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Looper.swift; sourceTree = "<group>"; };
 		A6582CD422D6FCDD005FBBC4 /* Funcs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Funcs.swift; sourceTree = "<group>"; };
+		A6721071233B512F00B5CEE2 /* Looper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Looper.swift; sourceTree = "<group>"; };
 		A69D8E0922F2DE2300A849A7 /* iOS_SandBox-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iOS_SandBox-Bridging-Header.h"; sourceTree = "<group>"; };
 		A69D8E0A22F2DE2300A849A7 /* ExceptionCatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExceptionCatcher.h; sourceTree = "<group>"; };
 		A6B4E44B231B77F60089B5F9 /* TestNaviVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNaviVC.swift; sourceTree = "<group>"; };
@@ -305,8 +305,8 @@
 				A6F5A9DD2259AD6100F56367 /* ViewState.swift */,
 				A6F5A9DF2259AE7000F56367 /* Renderable.swift */,
 				A6F5A9E12259B18800F56367 /* Throttle.swift */,
-				A6582CC222D4DED5005FBBC4 /* Looper.swift */,
 				A63361D1231908A700715173 /* ComposerVC.swift */,
+				A6721071233B512F00B5CEE2 /* Looper.swift */,
 				A69D8E0A22F2DE2300A849A7 /* ExceptionCatcher.h */,
 				A6B4E452231B7FAA0089B5F9 /* Renderer.swift */,
 				A69D8E0922F2DE2300A849A7 /* iOS_SandBox-Bridging-Header.h */,
@@ -515,9 +515,9 @@
 				A6F5A9F8225B66EB00F56367 /* Main.Model.swift in Sources */,
 				A6B4E451231B7AAF0089B5F9 /* TestCode.swift in Sources */,
 				A69D8E0B22F2DE2300A849A7 /* ExceptionCatcher.h in Sources */,
+				A6721072233B512F00B5CEE2 /* Looper.swift in Sources */,
 				8EB01EFD227A85CC0036A0AB /* GlobalFunction.swift in Sources */,
 				A6F5A9F0225B640900F56367 /* UINib+Extension.swift in Sources */,
-				A6582CC322D4DED5005FBBC4 /* Looper.swift in Sources */,
 				A6F5A9CB2259AC3E00F56367 /* AppDelegate.swift in Sources */,
 				A6F5A9EB225B5F3200F56367 /* MainFirstProfileContentView.swift in Sources */,
 				8E488A33228D60F200001289 /* Dictionary+Extension.swift in Sources */,
