@@ -36,6 +36,10 @@ class TestANaviVC: TestNaviVC, VCInitializer {
         super.viewDidLoad()
         print("TestANaviVC")
     }
+
+    deinit {
+        print("deinit TestANaviVC")
+    }
 }
 
 class TestBNaviVC: TestNaviVC, VCInitializer {
@@ -47,5 +51,9 @@ class TestBNaviVC: TestNaviVC, VCInitializer {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("TestBNaviVC")
+    }
+
+    deinit {
+        print("deinit TestBNaviVC")
     }
 }

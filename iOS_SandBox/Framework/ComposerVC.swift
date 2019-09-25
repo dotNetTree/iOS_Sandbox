@@ -84,4 +84,8 @@ class ComposerVC: UIViewController {
         })
         stack.addArrangedSubview(also(UIView()) { $0.backgroundColor = .white      })
     }
+
+    deinit {
+        print("deinit ComposerVC")
+    }
 }

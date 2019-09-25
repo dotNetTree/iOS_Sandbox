@@ -16,13 +16,24 @@ class TestRendererVC: UIViewController, VCInitializer {
             .first as! UIViewController
     }
 
+    deinit {
+        print("deinit TestRendererVC")
+    }
+    let pause = Looper.Pause()
     @IBOutlet weak var container: UIView!
     @IBOutlet weak var containerH: NSLayoutConstraint!
+    @IBOutlet weak var button: UIButton! {
+        didSet {
+            button.addAction { [weak self] _ in
+                self?.pause.active.toggle()
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         let root = also(
-                Renderer.Item(
+            Renderer.Item(
                 renderer: ViewRenderer(target: also(UIView()) {
                     $0.backgroundColor = UIColor(red: 221/255, green: 221/255, blue: 221/255, alpha: 1.0)
                 })
@@ -31,7 +42,7 @@ class TestRendererVC: UIViewController, VCInitializer {
             item.style.placer = BlockPlacer
             item.style.width.value  = "auto"
             item.style.height.value = "auto"
-            Watcher.who(self.view)
+            Watcher.who(self.view, pause: self.pause)
                 .watch(\.bounds) { [weak item] (_, vals) in
                     item?.style.width?.value = Double(vals.1.size.width)
                     item?.reflow()
@@ -108,35 +119,35 @@ class TestRendererVC: UIViewController, VCInitializer {
 ////            root.style.height.value = Double(vals.1.size.height)
 //            root.reflow()
 //        }
-        Watcher.who(item0_1.target().subviews.first).watch(\.frame) { (_, vals) in
+        Watcher.who(item0_1.target().subviews.first, pause: self.pause).watch(\.frame) { [weak self, weak item0_1, weak root] (_, vals) in
             UIView.animate(withDuration: 0.25) {
-                item0_1.style.height.value = Double(vals.1.size.height)
-                item0_1.reflow()
+                item0_1?.style.height.value = Double(vals.1.size.height)
+                item0_1?.reflow()
             }
-            self.containerH.constant = CGFloat(root.offset.h)
+            self?.containerH.constant = CGFloat(root?.offset.h ?? 0)
             UIView.animate(withDuration: 0.25) {
-                self.parent?.view.layoutIfNeeded()
+                self?.parent?.view.layoutIfNeeded()
             }
         }
-        Watcher.who(item0_2.target().subviews.first).watch(\.frame) { (_, vals) in
+        Watcher.who(item0_2.target().subviews.first, pause: self.pause).watch(\.frame) { [weak self, weak item0_2, weak root] (_, vals) in
             UIView.animate(withDuration: 0.25) {
-                item0_2.style.height.value = Double(vals.1.size.height)
-                item0_2.reflow()
+                item0_2?.style.height.value = Double(vals.1.size.height)
+                item0_2?.reflow()
             }
-            self.containerH.constant = CGFloat(root.offset.h)
+            self?.containerH.constant = CGFloat(root?.offset.h ?? 0)
             UIView.animate(withDuration: 0.25) {
-                self.parent?.view.layoutIfNeeded()
+                self?.parent?.view.layoutIfNeeded()
             }
         }
 
-        Watcher.who(item0_3.target().subviews.first).watch(\.frame) { (_, vals) in
+        Watcher.who(item0_3.target().subviews.first, pause: self.pause).watch(\.frame) { [weak self, weak item0_3, weak root] (_, vals) in
             UIView.animate(withDuration: 0.25) {
-                item0_3.style.height.value = Double(vals.1.size.height)
-                item0_3.reflow()
+                item0_3?.style.height.value = Double(vals.1.size.height)
+                item0_3?.reflow()
             }
-            self.containerH.constant = CGFloat(root.offset.h)
+            self?.containerH.constant = CGFloat(root?.offset.h ?? 0)
             UIView.animate(withDuration: 0.25) {
-                self.parent?.view.layoutIfNeeded()
+                self?.parent?.view.layoutIfNeeded()
             }
         }
 
@@ -165,6 +176,7 @@ class TestRendererVC: UIViewController, VCInitializer {
             dsl.isInfinity = true
             dsl.block = { item in
                 guard self != nil else { item.isStop = true; return }
+                _ = root    // root hold...
                 count += 1
                 if count % 40 == 0 {
                     toggle.toggle()
@@ -223,6 +235,7 @@ class TestRendererVC: UIViewController, VCInitializer {
 
         }
     }
+    
 
 }
 

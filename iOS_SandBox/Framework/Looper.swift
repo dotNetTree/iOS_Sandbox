@@ -62,7 +62,26 @@ enum Looper {
 
     class Pause {
         static let `default` = Pause()
-        var active: Bool = false
+        var active: Bool = false {
+            didSet {
+                let paused = !active
+                print("paused := \(paused)")
+                items.forEach { v in
+                    (v as? Item)?.isPaused = paused
+                }
+            }
+        }
+        private var items = NSMutableSet()
+        func add(item: Item) {
+            item.isPaused = active
+            items.add(item)
+        }
+        func remove(item: Item) {
+            items.remove(item)
+        }
+        deinit {
+            print("deinit Pause")
+        }
     }
     
     class Looper {
@@ -83,11 +102,10 @@ enum Looper {
         private var previus    = 0.0
         private var pauseStart = 0.0
         private var pausedTime = 0.0
-        private var items    = [Item]()
-//        private var remove   = [Item]()
+        private var items    = NSMutableArray()
         private var hasRemoveItems = false
-        private var add      = [Item]()
-        private var itemPool = [Item]()
+        private var add      = NSMutableArray()
+        private var itemPool = NSMutableArray()
 
         private static let updater = Updater()
 
@@ -110,15 +128,16 @@ enum Looper {
             }
 //            print(fps)
             previus = c
-            guard !items.isEmpty else { return }
+            guard items.count > 0 else { return }
             hasRemoveItems = false
-            add.removeAll()
+            add.removeAllObjects()
 
-            var _items: [Item]?
+            var _items: NSMutableArray!
             concurrentQueue.sync { _items = items }
+            let cnt = _items.count
             var i = 0
-            while i < _items!.count {
-                let item = _items![i]
+            while i < cnt {
+                let item = _items[i] as! Item
                 i += 1
                 if item.isPaused || item.start > c {
                     continue
@@ -151,61 +170,69 @@ enum Looper {
                     if let n = item.next {
                         n.start += c
                         n.end = n.start + n.term
-                        add.append(n)
+                        add.add(n)
                     }
                     hasRemoveItems = true
                     item.marked = true
                 }
             }
 
-            if hasRemoveItems || !add.isEmpty {
+            if hasRemoveItems || add.count > 0 {
                 concurrentQueue.async(flags: .barrier) { [weak self] in
                     guard let self = self else { return }
                     if self.hasRemoveItems {
                         for i in (0..<self.items.count).reversed() {
-                            let item = self.items[i]
+                            let item = self.items[i] as! Item
                             if item.marked {
                                 item.block = Item.emptyBlock
                                 item.ended = Item.emptyBlock
-                                self.items.remove(at: i)
-                                self.itemPool.append(item)
+                                self.items.remove(item)
+                                self.itemPool.add(item)
                             }
                         }
                     }
-                    if !self.add.isEmpty {
-                        self.items = self.items + self.add
+                    if self.add.count > 0 {
+                        self.items.addObjects(from: self.add as! [Any])
                     }
                     print("working items := \(self.items.count) | in pool := \(self.itemPool.count)")
                 }
             }
         }
 
-        fileprivate func getItem(_ i: ItemDSL, pause: Pause? = Pause.default) -> Item {
-            return also(itemPool.count == 0 ? Item() : itemPool.removeLast()) {
+        fileprivate func getItem(_ i: ItemDSL, pause: Pause? = nil) -> Item {
+            let item: Item
+            if itemPool.count == 0 {
+                item = Item()
+            } else {
+                item = itemPool.lastObject as! Item
+                itemPool.removeLastObject()
+            }
+            return also(item) {
                 $0.term  = i.time
                 $0.start = i.delay
                 $0.loop  = i.isInfinity ? -1 : i.loop
-                $0.ended = i.ended
                 $0.next  = nil
                 $0.isPaused = false
                 $0.isTurn   = false
                 $0.isStop   = false
                 $0.marked   = false
-                let block = i.block
-                $0.block = { [weak pause] item in
-                    if let pause = pause { item.isPaused = pause.active }
-                    block(item)
+                let ended = i.ended
+                $0.block = i.block
+                $0.ended = { [weak pause] item in
+                    pause?.remove(item: item)
+                    ended(item)
                 }
+                pause?.add(item: $0)
             }
         }
 
         @discardableResult
-        func invoke(pause: Pause? = Pause.default, _ block: (ItemDSL) -> Void) -> Sequence {
+        func invoke(pause: Pause? = nil, _ block: (ItemDSL) -> Void) -> Sequence {
             let item = getItem(also(ItemDSL()) { block($0) }, pause: pause)
             item.start += now()
             item.end = item.term == -1.0 ? -1.0 : item.start + item.term
             concurrentQueue.async(flags: .barrier) { [weak self] in
-                self?.items.append(item)
+                self?.items.add(item)
             }
             sequence.current = item
             return sequence
@@ -230,7 +257,7 @@ enum Looper {
             self.looper = looper
         }
         @discardableResult
-        func next(pause: Pause? = Pause.default, block: (Looper.ItemDSL) -> Void) -> Sequence {
+        func next(pause: Pause? = nil, block: (Looper.ItemDSL) -> Void) -> Sequence {
             let item = looper.getItem(also(Looper.ItemDSL()) { block($0) }, pause: pause)
             current?.next = item
             current = item
@@ -403,8 +430,9 @@ class Watcher {
     class Sequence<Who> where Who: AnyObject {
         weak var who: Who?
         private var _prev: Sequence<Who>?
+        private weak var pause: Looper.Pause?
         fileprivate var _invalidate: VoidClosure?
-        init(who: Who?) { self.who = who }
+        fileprivate init(who: Who?, pause: Looper.Pause?) { self.who = who; self.pause = pause }
         @discardableResult
         func watch<V>(
             _ keyPath: KeyPath<Who, V>,
@@ -412,8 +440,8 @@ class Watcher {
             predicate: @escaping (V, V) -> Bool = { $0 != $1 },
             changeHandler: @escaping (Who, (V, V)) -> Void
         ) -> Sequence<Who> where Who: AnyObject, V: Equatable {
-            _invalidate = Watcher.watch(who: who, keyPath, initValue: initValue, predicate: predicate, changeHandler: changeHandler)
-            return also(Sequence(who: who)) { [weak self] in
+            _invalidate = Watcher.watch(pause: pause, who: who, keyPath, initValue: initValue, predicate: predicate, changeHandler: changeHandler)
+            return also(Sequence(who: who, pause: pause)) { [weak self] in
                 $0._prev = self
                 $0._invalidate = self?._invalidate
             }
@@ -426,11 +454,12 @@ class Watcher {
             _prev?.invalidateAll()
         }
     }
-    static func who<Who>(_ who: Who?) -> Sequence<Who> where Who: AnyObject {
-        return Sequence(who: who)
+    static func who<Who>(_ who: Who?, pause: Looper.Pause? = nil) -> Sequence<Who> where Who: AnyObject {
+        return Sequence(who: who, pause: pause)
     }
     @discardableResult
     private static func watch<Who, V>(
+        pause: Looper.Pause?,
         who: Who?,
         _ keyPath: KeyPath<Who, V>,
         initValue: V? = nil,
@@ -438,7 +467,7 @@ class Watcher {
         changeHandler: @escaping (Who, (V, V)) -> Void
     ) -> VoidClosure where Who: AnyObject, V: Equatable  {
         var isFinish = false
-        looper.invoke { [weak who] (dsl) in
+        looper.invoke(pause: pause) { [weak who] (dsl) in
             var oVal = initValue ?? who?[keyPath: keyPath]
             dsl.isInfinity = true
             dsl.block = { (item) in
@@ -454,7 +483,7 @@ class Watcher {
                 }
             }
             dsl.ended = { _ in
-//                print("watch finished")
+                print("watch finished")
             }
         }
         return { isFinish = true }

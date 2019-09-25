@@ -37,10 +37,14 @@ class _InlinePlacer: Renderer.Placer {
         var y: Double = 0
         var lineHeight: Double = 0
         var prevWidth:  Double = 0
+
         children.forEach { (child) in
+            let tcw = (try? child.style.width.get(w)) ?? 0
             child.reflow()
+            child.offset = child.offset.new(["w": tcw])
             let cw = child.offset.w
             let ch = child.offset.h
+            print("!cwidth := \(cw)")
             x += prevWidth
             prevWidth = cw
             if w >= 0 && x + cw > w {
@@ -81,17 +85,17 @@ class _GridPlacer: Renderer.Placer {
         guard w != -1 else { return Renderer.Rect.new([ "w": w, "h": h ]) }
         var x: Double = 0
         var y: Double = padding.top
-        let w: Double = (w - padding.left - padding.right - (Double(cols) - 1) * spacing.h) / Double(cols)
+        let cw: Double = (w - padding.left - padding.right - (Double(cols) - 1) * spacing.h) / Double(cols)
         var lineHeight: Double = 0
         for (i, child) in (children.filter {
             ($0.style.visibility.value as? String) != Renderer.Visibility.GONE
         }.enumerated()) {
-            child.style.width.value = w
+            child.style.width.value = cw
             child.reflow()
             let ch = child.offset.h
-            x = padding.left + (Double(i % cols)) * (w + spacing.h)
+            x = padding.left + (Double(i % cols)) * (cw + spacing.h)
             if  i >= cols, i % cols == 0 {
-                y += lineHeight + spacing.h
+                y += lineHeight + spacing.v
                 lineHeight = 0
             }
             lineHeight = lineHeight < ch ? ch : lineHeight
@@ -104,7 +108,14 @@ class _GridPlacer: Renderer.Placer {
     }
 }
 
+class _NoPlacer2: Renderer.Placer {
+    override func setPosition<T>(_ w: Double, _ h: Double, _ children: [Renderer.Item<T>]) -> Renderer.Rect {
+        return Renderer.Rect.new(["w": w, "h": h])
+    }
+}
+let NoPlacer2     = _NoPlacer2()
 let NoPlacer     = _NoPlacer()
+
 let BlockPlacer  = _BlockPlacer()
 let InlinePlacer = _InlinePlacer()
 
@@ -300,8 +311,10 @@ enum Renderer {
             case string(String)
             case double(Double)
         }
-        var style: Style?
-        private var _value: Union? { didSet { style?.isUpdated = true } }
+        weak var style: Style?
+        private var _value: Union? {
+            didSet { style?.isUpdated = true; changed?() }
+        }
         var value: Any? {
             set {
                 let val: Union?
@@ -331,6 +344,10 @@ enum Renderer {
                 userInfo: ["msg": "not implemented `get()` function"]
             )
         }
+        private var changed: VoidClosure?
+        func changed(_ observe: @escaping VoidClosure) {
+            changed = observe
+        }
     }
 
     class Item<T> {
@@ -338,7 +355,7 @@ enum Renderer {
         private(set) var style: Style = Style()
         private let renderer: Renderer<T>
         private(set) var children = [Item<T>]()
-        private var container: Item<T>! = nil
+        private weak var container: Item<T>! = nil
         init(renderer: Renderer<T>) {
             self.renderer  = renderer
             self.container = self   // retain cycle !!!
@@ -388,5 +405,14 @@ enum Renderer {
             style.isUpdated = true
             reflow()
         }
+        deinit {
+            print("deinit Renderer.Item")
+        }
+    }
+}
+
+extension Renderer.Item where T: UIView {
+    static func instance(with target: UIView = UIView()) -> Renderer.Item<UIView> {
+        return Renderer.Item(renderer: ViewRenderer(target: target))
     }
 }
