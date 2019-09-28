@@ -59,6 +59,60 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
         after { [weak self] in
 
+//            Funnel()
+//                .next(body: { (fulfill) in
+//                    print("1 - 1 action")
+//                    after(delay: 2) {
+//                        fulfill(Funnel.Completion {
+//                            print("1 - 1 end")
+//                        })
+//                    }
+//                })
+//                .phase { () -> Funnel in
+//                    Funnel().next { (fulfill) in
+//                        print("2 - 1 action")
+//                        after(delay: 2) {
+//                            fulfill(Funnel.Completion {
+//                                print("2 - 1 end")
+//                            })
+//                        }
+//                    }
+//                    .next { (fulfill) in
+//                        print("2 - 2 action")
+//                        after(delay: 10) {
+//                            fulfill(Funnel.Completion {
+//                                print("2 - 2 end")
+//                            })
+//                        }
+//                    }
+//                }
+//                .phase { () -> Funnel in
+//                    Funnel().next { (fulfill) in
+//                        print("3 - 1 action")
+//                        after(delay: 2) {
+//                            fulfill(Funnel.Completion {
+//                                print("3 - 1 end")
+//                            })
+//                        }
+//                    }
+//                    .next { (fulfill) in
+//                        print("3 - 2 action")
+//                        after(delay: 10) {
+//                            fulfill(Funnel.Completion {
+//                                print("3 - 2 end")
+//                            })
+//                        }
+//                    }
+//                }
+//                .next(body: { (fulfill) in
+//                    print("1 - 2 action")
+//                    after(delay: 2) {
+//                        fulfill(Funnel.Completion {
+//                            print("1 - 2 end")
+//                        })
+//                    }
+//                })
+//                .start()
             let composed: ComposerVC
 
             let isATest = true

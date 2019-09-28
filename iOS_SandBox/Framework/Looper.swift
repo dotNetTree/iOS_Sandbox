@@ -65,7 +65,6 @@ enum Looper {
         var active: Bool = false {
             didSet {
                 let paused = !active
-                print("paused := \(paused)")
                 items.forEach { v in
                     (v as? Item)?.isPaused = paused
                 }
@@ -78,9 +77,6 @@ enum Looper {
         }
         func remove(item: Item) {
             items.remove(item)
-        }
-        deinit {
-            print("deinit Pause")
         }
     }
     
@@ -103,8 +99,8 @@ enum Looper {
         private var pauseStart = 0.0
         private var pausedTime = 0.0
         private var items    = NSMutableArray()
-        private var hasRemoveItems = false
-        private var add      = NSMutableArray()
+//        private var hasRemoveItems = false
+//        private var add      = NSMutableArray()
         private var itemPool = NSMutableArray()
 
         private static let updater = Updater()
@@ -129,11 +125,9 @@ enum Looper {
 //            print(fps)
             previus = c
             guard items.count > 0 else { return }
-            hasRemoveItems = false
-            add.removeAllObjects()
-
             var _items: NSMutableArray!
             concurrentQueue.sync { _items = items }
+            var hasRemoveItems = false
             let cnt = _items.count
             var i = 0
             while i < cnt {
@@ -170,17 +164,17 @@ enum Looper {
                     if let n = item.next {
                         n.start += c
                         n.end = n.start + n.term
-                        add.add(n)
                     }
                     hasRemoveItems = true
                     item.marked = true
                 }
             }
 
-            if hasRemoveItems || add.count > 0 {
+            if hasRemoveItems {
                 concurrentQueue.async(flags: .barrier) { [weak self] in
                     guard let self = self else { return }
-                    if self.hasRemoveItems {
+                    let add = NSMutableArray()
+                    if hasRemoveItems {
                         for i in (0..<self.items.count).reversed() {
                             let item = self.items[i] as! Item
                             if item.marked {
@@ -188,13 +182,18 @@ enum Looper {
                                 item.ended = Item.emptyBlock
                                 self.items.remove(item)
                                 self.itemPool.add(item)
+                                if let next = item.next {
+                                    add.add(next)
+                                }
                             }
                         }
                     }
-                    if self.add.count > 0 {
-                        self.items.addObjects(from: self.add as! [Any])
+                    if add.count > 0 {
+                        self.items.addObjects(from: add as! [Any])
                     }
+                    #if DEBUG
                     print("working items := \(self.items.count) | in pool := \(self.itemPool.count)")
+                    #endif
                 }
             }
         }
@@ -263,6 +262,12 @@ enum Looper {
             current = item
             return self
         }
+        @discardableResult
+        fileprivate func root(pause: Pause? = nil, block: (Looper.ItemDSL) -> Void) -> Sequence {
+            let item = looper.getItem(also(Looper.ItemDSL()) { block($0) }, pause: pause)
+            current = item
+            return self
+        }
     }
 }
 
@@ -320,7 +325,9 @@ class WeakContextContainer {
                         self.targets.remove(at: i)
                     }
                 }
+                #if DEBUG
 //                print("live context counts := \(self.targets.count)")
+                #endif
             }
         }
     }
@@ -336,6 +343,11 @@ class Funnel: WeakContextHasable {
     class Completion {
         static let EMPTY = Completion(action: { })
         var action: VoidClosure
+        var name: String = "empty"
+        func set(name: String) -> Completion {
+            self.name = name
+            return self
+        }
         init(action: @escaping VoidClosure) {
             self.action = action
         }
@@ -354,8 +366,7 @@ class Funnel: WeakContextHasable {
     }
     fileprivate var blocks = [Block]()
     internal weak var context: AnyObject?
-    private var seq: Looper.Sequence!
-    private var sub: Funnel? = nil
+    private var current: Looper.Item!
     init(context: AnyObject? = nil) {
         self.context = context
         WeakContextContainer.shared.add(self)
@@ -373,30 +384,35 @@ class Funnel: WeakContextHasable {
 
     private var active = false
     private func _start() {
+        var seq: Looper.Sequence!
+        var next: Funnel?
         while blocks.count > 0 {
             let block = blocks.removeFirst()
             if block.type == Block.TypeNext {
                 let body = block.body1!
-                if seq == nil {
-                    seq = looper.invoke(getDSLBlock(body))
+                if current == nil {
+                    seq  = looper.invoke(getDSLBlock(body))
+                    current = seq.current!
                 } else {
-                    seq = seq.next(block: getDSLBlock(body))
+                    seq = seq.root(block: getDSLBlock(body))
+                    current.next = seq.current!
+                    current = seq.current!
                 }
             } else {
-                let factory = block.body2!
-                sub = factory()
-                seq.current?.ended = { [weak self] item in
-                    guard let sub = self?.sub else { return }
-                    sub.start()
-                    var last: Funnel? = self
-                    while last?.sub != nil {
-                        last = last?.sub
-                    }
-                    last?.seq.current?.ended = { _ in
-                        self?._start()
-                    }
-                }
+                next = block.body2!()
                 break
+            }
+        }
+        if let next = next {
+            if blocks.count > 0 {
+                next.blocks.append(
+                    Funnel.Block.init(type: Block.TypePhase, body2: { also(self) { $0.current = nil } })
+                )
+            }
+            if current != nil {
+                current.ended = { _ in next._start() }
+            } else {
+                next._start()
             }
         }
     }
@@ -483,7 +499,7 @@ class Watcher {
                 }
             }
             dsl.ended = { _ in
-                print("watch finished")
+//                print("watch finished")
             }
         }
         return { isFinish = true }
