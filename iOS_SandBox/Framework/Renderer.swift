@@ -83,22 +83,29 @@ class _GridPlacer: Renderer.Placer {
     }
     override func setPosition<T>(_ w: Double, _ h: Double, _ children: [Renderer.Item<T>]) -> Renderer.Rect {
         guard w != -1 else { return Renderer.Rect.new([ "w": w, "h": h ]) }
-        var x: Double = 0
+        var x: Double = padding.left
         var y: Double = padding.top
-        let cw: Double = (w - padding.left - padding.right - (Double(cols) - 1) * spacing.h) / Double(cols)
+        let sw: Double = (w - padding.left - padding.right - (Double(cols) - 1) * spacing.h) / Double(cols)
         var lineHeight: Double = 0
-        for (i, child) in (children.filter {
+        var prevWidth: Double = 0
+
+        for (_, child) in (children.filter {
             ($0.style.visibility.value as? String) != Renderer.Visibility.GONE
         }.enumerated()) {
+            let span = child.style.span.value as! Double
+            let cw = span * sw + (span - 1) * spacing.h
             child.style.width.value = cw
             child.reflow()
             let ch = child.offset.h
-            x = padding.left + (Double(i % cols)) * (cw + spacing.h)
-            if  i >= cols, i % cols == 0 {
-                y += lineHeight + spacing.v
-                lineHeight = 0
+            x += prevWidth
+            prevWidth = cw
+            if w >= 0 && x + cw > w {
+                x = padding.left
+                y += lineHeight
+                lineHeight = ch
+            } else if lineHeight < ch {
+                lineHeight = ch
             }
-            lineHeight = lineHeight < ch ? ch : lineHeight
             child.offset = child.offset.new([ "x": x, "y": y ])
         }
         return Renderer.Rect.new([
@@ -235,6 +242,7 @@ enum Renderer {
         private(set) var height: Length<Double>!
         private(set) var backgroundColor: Color!
         private(set) var visibility: Visibility!
+        private(set) var span: Span!
         var placer: Placer = NoPlacer
         init() {
             x = Length<Double>(v: 0, style: self)
@@ -243,6 +251,7 @@ enum Renderer {
             height = Length<Double>(v: 0, style: self)
             backgroundColor = Color.init(v: nil, style: self)
             visibility = Visibility.init(v: Visibility.VISIBLE, style: self)
+            span = Span(v: 1, style: self)
         }
         func setSize<T>(_ rect: Rect, _ style: Style, _ children: [Item<T>]) -> Rect {
             let w = try! style.width.get(rect.w)
@@ -265,6 +274,16 @@ enum Renderer {
         }
         override func get(_ _container: String) throws -> Double {
             return 0
+        }
+    }
+
+    class Span: Unit<Int> {
+        init(v: Int?, style: Style?) {
+            super.init(style: style)
+            self.value = v
+        }
+        override func get(_ _container: Int) throws -> Double {
+            return self.value as! Double
         }
     }
 

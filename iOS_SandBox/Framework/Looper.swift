@@ -64,7 +64,7 @@ enum Looper {
         static let `default` = Pause()
         var active: Bool = false {
             didSet {
-                let paused = !active
+                let paused = active
                 items.forEach { v in
                     (v as? Item)?.isPaused = paused
                 }
