@@ -99,8 +99,6 @@ enum Looper {
         private var pauseStart = 0.0
         private var pausedTime = 0.0
         private var items    = NSMutableArray()
-//        private var hasRemoveItems = false
-//        private var add      = NSMutableArray()
         private var itemPool = NSMutableArray()
 
         private static let updater = Updater()
@@ -165,31 +163,25 @@ enum Looper {
                         n.start += c
                         n.end = n.start + n.term
                     }
-                    hasRemoveItems = true
                     item.marked = true
+                    hasRemoveItems = true
                 }
             }
 
             if hasRemoveItems {
                 concurrentQueue.async(flags: .barrier) { [weak self] in
                     guard let self = self else { return }
-                    let add = NSMutableArray()
-                    if hasRemoveItems {
-                        for i in (0..<self.items.count).reversed() {
-                            let item = self.items[i] as! Item
-                            if item.marked {
-                                item.block = Item.emptyBlock
-                                item.ended = Item.emptyBlock
-                                self.items.remove(item)
-                                self.itemPool.add(item)
-                                if let next = item.next {
-                                    add.add(next)
-                                }
+                    for i in (0..<self.items.count).reversed() {
+                        let item = self.items[i] as! Item
+                        if item.marked {
+                            item.block = Item.emptyBlock
+                            item.ended = Item.emptyBlock
+                            self.items.remove(item)
+                            self.itemPool.add(item)
+                            if let next = item.next {
+                                self.items.add(next)
                             }
                         }
-                    }
-                    if add.count > 0 {
-                        self.items.addObjects(from: add as! [Any])
                     }
                     #if DEBUG
                     print("working items := \(self.items.count) | in pool := \(self.itemPool.count)")
