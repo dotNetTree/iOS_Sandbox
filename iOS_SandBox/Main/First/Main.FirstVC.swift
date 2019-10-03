@@ -59,60 +59,52 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
         after { [weak self] in
 
-//            Funnel()
-//                .next(body: { (fulfill) in
-//                    print("1 - 1 action")
-//                    after(delay: 2) {
-//                        fulfill(Funnel.Completion {
-//                            print("1 - 1 end")
-//                        })
-//                    }
-//                })
-//                .phase { () -> Funnel in
-//                    Funnel().next { (fulfill) in
-//                        print("2 - 1 action")
-//                        after(delay: 2) {
-//                            fulfill(Funnel.Completion {
-//                                print("2 - 1 end")
-//                            })
-//                        }
-//                    }
-//                    .next { (fulfill) in
-//                        print("2 - 2 action")
-//                        after(delay: 10) {
-//                            fulfill(Funnel.Completion {
-//                                print("2 - 2 end")
-//                            })
-//                        }
-//                    }
-//                }
-//                .phase { () -> Funnel in
-//                    Funnel().next { (fulfill) in
-//                        print("3 - 1 action")
-//                        after(delay: 2) {
-//                            fulfill(Funnel.Completion {
-//                                print("3 - 1 end")
-//                            })
-//                        }
-//                    }
-//                    .next { (fulfill) in
-//                        print("3 - 2 action")
-//                        after(delay: 10) {
-//                            fulfill(Funnel.Completion {
-//                                print("3 - 2 end")
-//                            })
-//                        }
-//                    }
-//                }
-//                .next(body: { (fulfill) in
-//                    print("1 - 2 action")
-//                    after(delay: 2) {
-//                        fulfill(Funnel.Completion {
-//                            print("1 - 2 end")
-//                        })
-//                    }
-//                })
-//                .start()
+            Funnel()
+                .async { (sync) in
+                    print("1 - 1 action")
+                    after(delay: 2) { sync({ print("1 - 1 end") }) }
+                }
+                .sync { print("1 - 1 end go")  }
+                .bundle {
+                    Funnel().async { (sync) in
+                        print("2 - 1 action")
+                        print("waiting 2sec...")
+                        after(delay: 2) { sync({ print("2 - 1 end") }) }
+                    }
+                    .bundle {
+                        Funnel().async { (sync) in
+                            print("2 - 1 - 1 action")
+                            print("waiting 2sec...")
+                            after(delay: 2) { sync({ print("2 - 1 - 1 end") }) }
+                        }
+                    }
+                    .async { (sync) in
+                        print("2 - 2 action")
+                        print("waiting 10sec...")
+                        after(delay: 10) { sync({ print("2 - 2 end") }) }
+                    }
+                    .sync { print("2 - 2 end go")  }
+                }
+                .bundle {
+                    Funnel().async { (sync) in
+                        print("3 - 1 action")
+                        print("waiting 2sec...")
+                        after(delay: 2) { sync({ print("3 - 1 end") }) }
+                    }
+                    .sync { print("3 - 1 end go") }
+                    .async { (sync) in
+                        print("3 - 2 action")
+                        print("waiting 10sec...")
+                        after(delay: 10) { sync({ print("3 - 2 end") }) }
+                    }
+                }
+                .async { (sync) in
+                    print("1 - 2 action")
+                    print("waiting 2sec...")
+                    after(delay: 2) { sync({ print("1 - 2 end") }) }
+                }
+                .sync { print("1 - 2 end go") }
+                .start()
             let composed: ComposerVC
 
             let isATest = true

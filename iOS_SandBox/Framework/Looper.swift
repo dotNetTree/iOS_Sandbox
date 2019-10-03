@@ -184,7 +184,7 @@ enum Looper {
                         }
                     }
                     #if DEBUG
-                    print("working items := \(self.items.count) | in pool := \(self.itemPool.count)")
+//                    print("working items := \(self.items.count) | in pool := \(self.itemPool.count)")
                     #endif
                 }
             }
@@ -328,60 +328,59 @@ class WeakContextContainer {
     }
 }
 
-class Funnel: WeakContextHasable {
+class Completion<T> {
+    var action: () -> T
+    init(action: @escaping () -> T) {
+        self.action = action
+    }
+}
 
-    typealias Fulfill = (Completion) -> Void
-    
-    class Completion {
-        static let EMPTY = Completion(action: { })
-        var action: VoidClosure
-        var name: String = "empty"
-        func set(name: String) -> Completion {
-            self.name = name
-            return self
-        }
-        init(action: @escaping VoidClosure) {
-            self.action = action
-        }
-    }
+class Funnel {
+
+    typealias Fulfill = (@escaping Sync) -> Void
+    typealias Async  = (@escaping Fulfill) -> Void
+    typealias Sync   = () -> Void
+    typealias Bundle = () -> Funnel
+
     fileprivate class Block {
-        static let TypeNext = "next"
-        static let TypePhase = "phase"
+        static let TypeAsync  = "async"
+        static let TypeSync   = "sync"
+        static let TypeBundle = "bundle"
         let type: String
-        let body1: ((@escaping Fulfill) -> Void)?
-        let body2: (() -> Funnel)?
-        init(type: String, body1: ((@escaping Fulfill) -> Void)? = nil, body2: (() -> Funnel)? = nil) {
+        let body: Any
+        init(type: String, body: Any) {
             self.type = type
-            self.body1 = body1
-            self.body2 = body2
+            self.body = body
         }
-    }
-    fileprivate var blocks = [Block]()
-    internal weak var context: AnyObject?
-    private var current: Looper.Item!
-    init(context: AnyObject? = nil) {
-        self.context = context
-        WeakContextContainer.shared.add(self)
-    }
-    @discardableResult
-    func next(body: @escaping (@escaping Fulfill) -> Void) -> Funnel {
-        blocks.append(Funnel.Block(type: Block.TypeNext, body1: body))
-        return self
-    }
-    @discardableResult
-    func phase(body: @escaping () -> Funnel) -> Funnel {
-        blocks.append(Funnel.Block(type: Block.TypePhase, body2: body))
-        return self
     }
 
     private var active = false
+    fileprivate var blocks = [Block]()
+    private var current: Looper.Item!
+
+    @discardableResult
+    func async(body: @escaping Async) -> Funnel {
+        blocks.append(Funnel.Block(type: Block.TypeAsync, body: body))
+        return self
+    }
+    @discardableResult
+    func sync(body: @escaping Sync) -> Funnel {
+        blocks.append(Funnel.Block(type: Block.TypeSync, body: body))
+        return self
+    }
+    @discardableResult
+    func bundle(body: @escaping Bundle) -> Funnel {
+        blocks.append(Funnel.Block(type: Block.TypeBundle, body: body))
+        return self
+    }
     private func _start() {
         var seq: Looper.Sequence!
         var next: Funnel?
-        while blocks.count > 0 {
+        knitting: while blocks.count > 0 {
             let block = blocks.removeFirst()
-            if block.type == Block.TypeNext {
-                let body = block.body1!
+            switch block.type {
+            case Block.TypeAsync:
+                let body = block.body as! Async
                 if current == nil {
                     seq  = looper.invoke(getDSLBlock(body))
                     current = seq.current!
@@ -390,15 +389,21 @@ class Funnel: WeakContextHasable {
                     current.next = seq.current!
                     current = seq.current!
                 }
-            } else {
-                next = block.body2!()
-                break
+            case Block.TypeSync:
+                let body = block.body as! Sync
+                let nBody: Async = { $0({ body() }) }
+                blocks.insert(Funnel.Block(type: Block.TypeAsync, body: nBody), at: 0)
+            case Block.TypeBundle:
+                let body = block.body as! Bundle
+                next = body()
+                break knitting
+            default: break
             }
         }
         if let next = next {
             if blocks.count > 0 {
                 next.blocks.append(
-                    Funnel.Block.init(type: Block.TypePhase, body2: { also(self) { $0.current = nil } })
+                    Funnel.Block(type: Block.TypeBundle, body: { also(self) { $0.current = nil } })
                 )
             }
             if current != nil {
@@ -417,21 +422,16 @@ class Funnel: WeakContextHasable {
     private func getDSLBlock(
         _ body: @escaping (@escaping Fulfill) -> Void
     ) -> (Looper.Looper.ItemDSL) -> Void {
-        return { dsl in
-            var completion = Completion.EMPTY
-            body({ completion = $0 })
+        { dsl in
+            var completion: Sync?
+            body({ c in completion = c })
             dsl.isInfinity = true
             dsl.block = { item in
-                if completion !== Completion.EMPTY {
-                    completion.action()
-                    item.isStop = true
-                }
+                if completion != nil { completion?(); item.isStop = true }
             }
         }
     }
-    deinit {
-        print("deinit Funnel")
-    }
+//    deinit { print("deinit Funnel") }
 }
 
 class Watcher {
