@@ -59,51 +59,74 @@ class MainFirstVC: UIViewController, ThrottleObserver {
 
         after { [weak self] in
 
-            Funnel()
+            Sieve()
                 .async { (sync) in
                     print("1 - 1 action")
-                    after(delay: 2) { sync({ print("1 - 1 end") }) }
+                    print("1 - 1 acting (3sec)")
+                    after(delay: 3) {
+                        print("1 - 1 finished")
+                        sync({ print("1 - 1 fulfilled") })
+                    }
                 }
-                .sync { print("1 - 1 end go")  }
+                .sync { print("1 - 2 fulfilled")  }
+                .pause(delay: 10) { print("paused 10 sec...") }
                 .bundle {
-                    Funnel().async { (sync) in
+                    Sieve().async { (sync) in
                         print("2 - 1 action")
-                        print("waiting 2sec...")
-                        after(delay: 2) { sync({ print("2 - 1 end") }) }
+                        print("2 - 1 acting (4sec)")
+                        after(delay: 4) {
+                            print("2 - 1 finished")
+                            sync({ print("2 - 1 fulfilled") })
+                        }
                     }
                     .bundle {
-                        Funnel().async { (sync) in
+                        Sieve().async { (sync) in
                             print("2 - 1 - 1 action")
-                            print("waiting 2sec...")
-                            after(delay: 2) { sync({ print("2 - 1 - 1 end") }) }
+                            print("2 - 1 - 1 acting (2sec)")
+                            after(delay: 2) {
+                                print("2 - 1 - 1 finished")
+                                sync({ print("2 - 1 - 1 fulfilled") })
+                            }
                         }
                     }
                     .async { (sync) in
                         print("2 - 2 action")
-                        print("waiting 10sec...")
-                        after(delay: 10) { sync({ print("2 - 2 end") }) }
+                        print("2 - 2 acting (2sec)")
+                        after(delay: 2) {
+                            print("2 - 2 finished")
+                            sync({ print("2 - 2 fulfilled") })
+                        }
                     }
-                    .sync { print("2 - 2 end go")  }
+                    .sync { print("2 - 3 fulfilled")  }
                 }
                 .bundle {
-                    Funnel().async { (sync) in
+                    Sieve().async { (sync) in
                         print("3 - 1 action")
-                        print("waiting 2sec...")
-                        after(delay: 2) { sync({ print("3 - 1 end") }) }
+                        print("3 - 1 acting (2sec)")
+                        after(delay: 2) {
+                            print("3 - 1 finished")
+                            sync({ print("3 - 1 fulfilled") })
+                        }
                     }
-                    .sync { print("3 - 1 end go") }
+                    .sync { print("3 - 2 sync") }
                     .async { (sync) in
-                        print("3 - 2 action")
-                        print("waiting 10sec...")
-                        after(delay: 10) { sync({ print("3 - 2 end") }) }
+                        print("3 - 3 action")
+                        print("3 - 3 acting (2sec)")
+                        after(delay: 10) {
+                            print("3 - 3 finished")
+                            sync({ print("3 - 3 fulfilled") })
+                        }
                     }
                 }
                 .async { (sync) in
-                    print("1 - 2 action")
-                    print("waiting 2sec...")
-                    after(delay: 2) { sync({ print("1 - 2 end") }) }
+                    print("1 - 3 action")
+                    print("1 - 3 acting (2sec)")
+                    after(delay: 2) {
+                        print("1 - 3 finished")
+                        sync({ print("1 - 3 fulfilled") })
+                    }
                 }
-                .sync { print("1 - 2 end go") }
+                .sync { print("1 - 4 fulfilled") }
                 .start()
             let composed: ComposerVC
 

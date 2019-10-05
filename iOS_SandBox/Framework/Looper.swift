@@ -335,22 +335,26 @@ class Completion<T> {
     }
 }
 
-class Funnel {
+class Sieve {
 
     typealias Fulfill = (@escaping Sync) -> Void
     typealias Async  = (@escaping Fulfill) -> Void
     typealias Sync   = () -> Void
-    typealias Bundle = () -> Funnel
+    typealias Bundle = () -> Sieve
 
     fileprivate class Block {
+        static let EmptyBody = { }
         static let TypeAsync  = "async"
         static let TypeSync   = "sync"
+        static let TypePause  = "pause"
         static let TypeBundle = "bundle"
-        let type: String
+        var type: String
         let body: Any
-        init(type: String, body: Any) {
-            self.type = type
-            self.body = body
+        var delay: TimeInterval
+        init(type: String, body: Any, delay: TimeInterval = 0) {
+            self.type  = type
+            self.body  = body
+            self.delay = delay
         }
     }
 
@@ -359,23 +363,28 @@ class Funnel {
     private var current: Looper.Item!
 
     @discardableResult
-    func async(body: @escaping Async) -> Funnel {
-        blocks.append(Funnel.Block(type: Block.TypeAsync, body: body))
+    func async(body: @escaping Async) -> Sieve {
+        blocks.append(Sieve.Block(type: Block.TypeAsync, body: body))
         return self
     }
     @discardableResult
-    func sync(body: @escaping Sync) -> Funnel {
-        blocks.append(Funnel.Block(type: Block.TypeSync, body: body))
+    func sync(body: @escaping Sync) -> Sieve {
+        blocks.append(Sieve.Block(type: Block.TypeSync, body: body))
         return self
     }
     @discardableResult
-    func bundle(body: @escaping Bundle) -> Funnel {
-        blocks.append(Funnel.Block(type: Block.TypeBundle, body: body))
+    func pause(delay: TimeInterval, body: @escaping Sync = Block.EmptyBody) -> Sieve {
+        blocks.append(Sieve.Block(type: Block.TypePause, body: body, delay: delay))
+        return self
+    }
+    @discardableResult
+    func bundle(body: @escaping Bundle) -> Sieve {
+        blocks.append(Sieve.Block(type: Block.TypeBundle, body: body))
         return self
     }
     private func _start() {
         var seq: Looper.Sequence!
-        var next: Funnel?
+        var next: Sieve?
         knitting: while blocks.count > 0 {
             let block = blocks.removeFirst()
             switch block.type {
@@ -391,8 +400,19 @@ class Funnel {
                 }
             case Block.TypeSync:
                 let body = block.body as! Sync
-                let nBody: Async = { $0({ body() }) }
-                blocks.insert(Funnel.Block(type: Block.TypeAsync, body: nBody), at: 0)
+                let nBody: Async = { fulfill in fulfill({ body() }) }
+                blocks.insert(Sieve.Block(type: Block.TypeAsync, body: nBody), at: 0)
+            case Block.TypePause:
+                let body  = block.body as! Sync
+                let delay = block.delay
+                if delay == 0 {
+                    blocks.insert(also(block) { $0.type = Block.TypeSync }, at: 0)
+                } else {
+                    let nBody: Async = { fulfill in
+                        after(delay: delay) { fulfill({ body() }) }
+                    }
+                    blocks.insert(Sieve.Block(type: Block.TypeAsync, body: nBody), at: 0)
+                }
             case Block.TypeBundle:
                 let body = block.body as! Bundle
                 next = body()
@@ -403,7 +423,7 @@ class Funnel {
         if let next = next {
             if blocks.count > 0 {
                 next.blocks.append(
-                    Funnel.Block(type: Block.TypeBundle, body: { also(self) { $0.current = nil } })
+                    Sieve.Block(type: Block.TypeBundle, body: { also(self) { $0.current = nil } })
                 )
             }
             if current != nil {
